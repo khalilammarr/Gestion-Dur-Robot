@@ -57,7 +57,7 @@ public abstract class Robot {
         enMarche=false;
         ajouterHistorique("Arret Du Robot");
     }
-    public void consommer(int quantite){
+    public void consommerEnergie(int quantite){
         int temp=energie-quantite;
         if(temp<=0){
             energie=0;
@@ -66,5 +66,24 @@ public abstract class Robot {
             energie=temp;
         }
     }
-    public
+    public void recharger(int quantite){
+        if (energie+quantite>100){
+            energie=100;
+        }
+        else{
+            energie+=quantite;
+        }
+    }
+    public abstract void deplacer(int x,int y);
+    public abstract void effectuertacher();
+    public List<String> getHistorique() {
+        return historiqueActions;
+    }
+    @Override
+    public String toString() {
+        return this.getClass().getSimpleName()+ " [ID: " + id + // .getSimpleName tejbdlk esm l class l instance
+                ", Position: (" + x + "," + y + ")" +
+                ", Énergie: " + energie + "%" +
+                ", Heures: " + heuresUtilisation + "]";
+    } // fazet robot industriel mch shiha lezem nejbdou esm l subclass fama robotlivrasionn , robot connecte w zebi
 }

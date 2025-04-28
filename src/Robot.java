@@ -12,7 +12,13 @@ public abstract class Robot {
         this.x = x;
         this.y = y;
         this.id=id;
-        this.energie=energie;
+        if (energie>100){
+            //on leve mch exception ama nkharjoulou msg li rahi l max 100 w nekhdhou l max
+            this.energie=100;
+        }
+        else {
+            this.energie = energie;
+        }
         this.historiqueActions=new ArrayList<>();
         this.ajouterHistorique("Robot Créé");
     }
@@ -51,7 +57,6 @@ public abstract class Robot {
             // l energie tonkes wala le ya zabri
             ajouterHistorique("Démarrage Du Robot");
         }
-
     }
     public void arreter(){
         enMarche=false;

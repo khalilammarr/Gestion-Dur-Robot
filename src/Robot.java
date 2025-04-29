@@ -3,13 +3,15 @@ import java.util.List;
 import java.util.Scanner;
 
 public abstract class Robot {
-    private int x;
-    private int y;
-    private String id;
+    //ay attribut privé raditou protect bech najemch nekhdem behom f classe les classe lokhrine
+    protected int x;
+    protected int y;
+    protected String id;
     public int heuresUtilisation=0;
-    private int energie;
+    protected int energie;
     public boolean enMarche=false;
     protected List<String> historiqueActions;
+    //normalement naamlou constructeur par defaut ?
     public Robot(int x, int y, String id,int energie) {
         this.x = x;
         this.y = y;

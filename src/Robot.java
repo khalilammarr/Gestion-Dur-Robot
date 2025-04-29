@@ -1,5 +1,7 @@
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
+
 public abstract class Robot {
     private int x;
     private int y;
@@ -12,13 +14,20 @@ public abstract class Robot {
         this.x = x;
         this.y = y;
         this.id=id;
-        if (energie>100){
-            //on leve mch exception ama nkharjoulou msg li rahi l max 100 w nekhdhou l max
-            this.energie=100;
+        Scanner scanner = new Scanner(System.in);
+        if (energie>100 || energie<0) {
+            System.out.println("Erreur : l'énergie doit être comprise entre 0 et 100.");
+            while (energie > 100 || energie < 0) {
+                System.out.print("Veuillez entrer une énergie valide valide : ");
+                try {
+                    energie = scanner.nextInt(); // Essayer de lire un entier
+                } catch (Exception e) {
+                    System.out.println("Erreur : veuillez entrer un nombre entier.");
+                    scanner.next(); // Consommer l'entrée invalide pour éviter une boucle infinie
+                }
+            }
         }
-        else {
-            this.energie = energie;
-        }
+        this.energie = energie;
         this.historiqueActions=new ArrayList<>();
         this.ajouterHistorique("Robot Créé");
     }
@@ -34,7 +43,7 @@ public abstract class Robot {
     public int getEnergie() {
         return energie;
     }
-    public void ajouterHistorique(String nom) {
+    public void ajouterHistorique(String action) {
         //Nappendiw  l wakt wl date wl message eli je maa l fonction lel liste historiqueActions,
     }
     public void verifierEnergie(int energierequise){

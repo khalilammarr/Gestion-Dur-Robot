@@ -31,7 +31,8 @@ public abstract class Robot {
         }
         this.energie = energie;
         this.historiqueActions=new ArrayList<>();
-        this.ajouterHistorique("Robot Créé");
+        this.ajouterHistorique("Robot Créé");/* lena raw mahma ken el robot nafs el jomla f liste mtaa
+        historique weli heya nafs mochkelt tostring */
     }
     public int getX() {
         return x;
@@ -48,10 +49,11 @@ public abstract class Robot {
     public void ajouterHistorique(String action) {
         //Nappendiw  l wakt wl date wl message eli je maa l fonction lel liste historiqueActions,
     }
-    public void verifierEnergie(int energierequise){
+    public boolean verifierEnergie(int energierequise){ // badalt type de retour
         if(energierequise>this.energie){
             //on leve une exception : energie insuffisante
         }
+        return false; // ila an ya2ti ma youkhalef thelika
     }
     public void verifierMaintenance(){
         if(this.heuresUtilisation>=100){

@@ -12,11 +12,7 @@ public abstract class RobotConnecte extends Robot implements Connectable{
         super(x, y, id, energie);
         this.connecte = false;
         this.reseauConnecte = null ;
-        this.ajouterHistorique("RobotConnecte Créé");
     }
-
-
-    // à implementer :
 
 
     public abstract void deplacer(int x,int y);

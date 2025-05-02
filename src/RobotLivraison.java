@@ -1,32 +1,32 @@
 /* f classe hethi les methode deplacer w eli baadha yetkhdmou (énnoné) */
-
 import java.util.Scanner;
-
 public class RobotLivraison extends RobotConnecte {
-
     // Constantes d'énergie
     protected static final int ENERGIE_LIVRAISON = 15;
     protected static final int ENERGIE_CHARGEMENT = 5;
-
     protected String colisActuel ;
     protected String destination ;
     protected boolean enlivraison ;
-
-    public RobotLivraison(int x, int y, String id,int energie) { /* nafs mochkla mtaa el energie lena
-        (kima classe eli kbalha noksed)  */
-        super(x, y, id, energie);
-        this.colisActuel = null ; /* fama mochkla lena : f énnoncé hat valeur par defaut 0 or que heya string
-        zid thabet feha */
+    public RobotLivraison(int x, int y, String id) {
+        super(x, y, id);
+        this.colisActuel = null ;
         this.destination = null ;
         this.enlivraison = false ;
     }
-
-
-
-
-
     @Override
-    public void deplacer(int x,int y){ }
+    public void deplacer(int x,int y){
+        double distance = Math.sqrt(Math.pow(x -this.getX(), 2) + Math.pow(y-this.getY(), 2));
+        if(distance > 100){
+            //leve exception ya zabri
+        }
+        int energieNecessaire = (int) Math.ceil(0.3 * distance);//ceil tkaber fama round tsagher, ama nrmlment hachetna bih akber
+        this.verifierMaintenance();
+        this.verifierEnergie(energieNecessaire);
+        this.setX(x);
+        this.setY(y);
+        this.consommerEnergie(energieNecessaire);
+        }
+
     @Override
     // lezemha exception :
     public  void effectuertacher(){
@@ -53,13 +53,12 @@ public class RobotLivraison extends RobotConnecte {
                 }
             }
             if((reponse.toUpperCase()).equals("OUI")){
-                if(verifierEnergie(5)){ // 5 testahlekhom k tchargi colis
+                if(verifierEnergie(5)){
                     String destination ;
                     System.out.print("Donnez votre destanation");
                     destination = scanner.nextLine() ;
                     chargerColis(destination);
                 }
-
             }
             else if((reponse.toUpperCase()).equals("NON")){
                 this.ajouterHistorique("En attente de colis");
@@ -67,9 +66,21 @@ public class RobotLivraison extends RobotConnecte {
         }
     }
     public void faireLivraison(int Destx,int Desty){
-
+        enlivraison = true ;
+        deplacer(Destx,Desty);
+        colisActuel = null ;
+        enlivraison = false ;
+        ajouterHistorique("Livraison terminée à "+ destination);
     }
     public void chargerColis(String destination){
-
+        if(enlivraison){
+            //on leve un message que le robot est edja en livraison
     }
+        else{
+            if(colisActuel != null){
+
+            }
+        }
 }
+}
+

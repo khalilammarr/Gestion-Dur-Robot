@@ -12,28 +12,24 @@ public abstract class Robot {
     public boolean enMarche=false;
     protected List<String> historiqueActions;
     //normalement naamlou constructeur par defaut ?
-    public Robot(int x, int y, String id,int energie) {
+    public Robot(int x, int y, String id) {
         this.x = x;
         this.y = y;
         this.id=id;
         Scanner scanner = new Scanner(System.in);
-        if (energie>100 || energie<0) {
-            System.out.println("Erreur : l'énergie doit être comprise entre 0 et 100.");
-            while (energie > 100 || energie < 0) {
-                System.out.print("Veuillez entrer une énergie valide valide : ");
-                try {
-                    energie = scanner.nextInt(); // Essayer de lire un entier
-                } catch (Exception e) {
-                    System.out.println("Erreur : veuillez entrer un nombre entier.");
-                    scanner.next(); // Consommer l'entrée invalide pour éviter une boucle infinie
-                }
-            }
-        }
-        this.energie = energie;
+        this.energie = 100;
         this.historiqueActions=new ArrayList<>();
         this.ajouterHistorique("Robot Créé");/* lena raw mahma ken el robot nafs el jomla f liste mtaa
         historique weli heya nafs mochkelt tostring */
     }
+    public void setX(int x) {
+        this.x = x;
+    }
+
+    public void setY(int y) {
+        this.y = y;
+    }
+
     public int getX() {
         return x;
     }

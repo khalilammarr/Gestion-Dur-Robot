@@ -5,27 +5,23 @@ w robot eli baadou )*/
 public abstract class RobotConnecte extends Robot implements Connectable{
     public boolean connecte;
     public String reseauConnecte;
-
-
-    public RobotConnecte(int x, int y, String id,int energie){ /* majbedch aal energie f constructeur ama
+    public RobotConnecte(int x, int y, String id){ /* majbedch aal energie f constructeur ama
         lezem nhotha ken bech nkhaliw el constructeur mtaa classe robot akeka */
-        super(x, y, id, energie);
+        super(x, y, id);
         this.connecte = false;
         this.reseauConnecte = null ;
     }
-
-
     public abstract void deplacer(int x,int y);
     public abstract void effectuertacher();
     @Override
     public void connecter(String reseau){
         if (energie<5){
-            System.out.println("L'énergie doit être >= 5% pour se connecter");
+            System.out.println("La connexion à un réseau nécessite au moins 5% de l'énergie");
         }
         else {
             connecte = true;
             reseauConnecte = reseau;
-            energie-=5;
+            consommerEnergie(5);
             this.ajouterHistorique("Robot connecte à: "+reseauConnecte);
         }
     }
@@ -43,7 +39,7 @@ public abstract class RobotConnecte extends Robot implements Connectable{
             if (energie < 3) {
                 System.out.println("L'énergie doit être >= 3% pour se connecter");
             } else {
-                energie -= 3;
+                consommerEnergie(3);
                 this.ajouterHistorique("Données envoyées : " + donnees);
             }
         }

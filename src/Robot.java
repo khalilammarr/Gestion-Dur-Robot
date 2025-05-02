@@ -42,6 +42,15 @@ public abstract class Robot {
     public int getEnergie() {
         return energie;
     }
+
+    public int getHeuresUtilisation() {
+        return heuresUtilisation;
+    }
+
+    public List<String> getHistoriqueActions() {
+        return historiqueActions;
+    }
+
     public void ajouterHistorique(String action) {
         //Nappendiw  l wakt wl date wl message eli je maa l fonction lel liste historiqueActions,
     }

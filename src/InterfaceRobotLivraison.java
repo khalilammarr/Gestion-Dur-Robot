@@ -15,7 +15,6 @@ public class InterfaceRobotLivraison extends JFrame {
     private int energie = 100;
     private boolean enMarche = false;
     private JProgressBar energieBar;
-    private JTextArea historiqueArea;
     private ArrayList<String> historique = new ArrayList<>();
     private ImageIcon robotImage;
 
@@ -26,8 +25,12 @@ public class InterfaceRobotLivraison extends JFrame {
         setLayout(new BorderLayout());
 
         // Load and scale robot image
-        Image img = new ImageIcon("robot_icon.png").getImage().getScaledInstance(40, 40, Image.SCALE_SMOOTH);
-        robotImage = new ImageIcon(img);
+        try {
+            robotImage = loadRobotImage("/robot_icon.png"); // Ensure the image is in resources or root
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Image robot non trouvée !");
+            robotImage = null;
+        }
 
         // Panel grille
         JPanel gridPanel = new JPanel(new GridLayout(GRID_SIZE, GRID_SIZE));
@@ -195,6 +198,16 @@ public class InterfaceRobotLivraison extends JFrame {
         add(controlPanel, BorderLayout.SOUTH);
     }
 
+    private ImageIcon loadRobotImage(String path) throws Exception {
+        java.net.URL imgURL = getClass().getResource(path);
+        if (imgURL == null) {
+            throw new Exception("Image not found: " + path);
+        }
+        ImageIcon icon = new ImageIcon(imgURL);
+        Image img = icon.getImage().getScaledInstance(40, 40, Image.SCALE_SMOOTH);
+        return new ImageIcon(img);
+    }
+
     private void consommerEnergie(int quantite) {
         energie = Math.max(0, energie - quantite);
         energieBar.setValue(energie);
@@ -226,17 +239,20 @@ public class InterfaceRobotLivraison extends JFrame {
         for (int i = 0; i < GRID_SIZE; i++) {
             for (int j = 0; j < GRID_SIZE; j++) {
                 gridButtons[i][j].setText(gridButtons[i][j].getActionCommand());
-                gridButtons[i][j].setIcon(null); // Clear any previous icon
+                gridButtons[i][j].setIcon(null);
                 gridButtons[i][j].setBackground(Color.WHITE);
             }
         }
 
-        // Set robot appearance
-        gridButtons[robotX][robotY].setText(""); // Remove text
-        gridButtons[robotX][robotY].setIcon(robotImage); // Set icon
+        if (robotImage != null) {
+            gridButtons[robotX][robotY].setText("");
+            gridButtons[robotX][robotY].setIcon(robotImage);
+        } else {
+            gridButtons[robotX][robotY].setText("🤖");
+        }
+
         gridButtons[robotX][robotY].setBackground(enMarche ? Color.CYAN : Color.LIGHT_GRAY);
 
-        // Destination highlight
         if (destinationPoint != null)
             gridButtons[destinationPoint.x][destinationPoint.y].setBackground(Color.YELLOW);
     }

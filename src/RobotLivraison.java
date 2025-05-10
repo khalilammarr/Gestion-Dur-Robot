@@ -51,7 +51,7 @@ public class RobotLivraison extends RobotConnecte {
             System.out.print("Veuillez entrer les coordonnées (X,Y) de la destination : ");
             int x = scanner.nextInt();
             int y = scanner.nextInt();
-            faireLivraison(x, y);
+            faireLivraison(x,y);
         } else {
             System.out.print("Voulez-vous charger un colis ? (Oui/Non) : ");
             scanner.nextLine(); // pour nettoyer le buffer
@@ -88,8 +88,6 @@ public class RobotLivraison extends RobotConnecte {
             System.out.println(e.getMessage());
         }
     }
-
-
     public void chargerColis(String destination) {
         try {
             if (enlivraison || colisActuel != 0) {

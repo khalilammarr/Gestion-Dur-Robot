@@ -1,4 +1,3 @@
-
 import exceptions.* ;
 
 
@@ -41,46 +40,38 @@ public class RobotLivraison extends RobotConnecte {
 
 
     @Override
-    public void effectuertacher() {
+    public void effectuertacher() throws RobotEnPanneException, EnergieInsuffisanteException {
         Scanner scanner = new Scanner(System.in);
+
         if (!enMarche) {
-            try {
-                throw new RobotEnPanneException();
-            } catch (RobotEnPanneException e) {
-                System.out.println(e.getMessage());
-                return;
-            }
+            throw new RobotEnPanneException();
         }
 
         if (enlivraison) {
-            System.out.print("Entrez les coordonnées (X,Y) de la destination : ");
+            System.out.print("Veuillez entrer les coordonnées (X,Y) de la destination : ");
             int x = scanner.nextInt();
             int y = scanner.nextInt();
             faireLivraison(x, y);
         } else {
-            System.out.print("Charger un nouveau colis ? (Oui/Non) : ");
-            scanner.nextLine(); // pour vider le buffer
-            String reponse = scanner.nextLine();
-            while (!reponse.equalsIgnoreCase("OUI") && !reponse.equalsIgnoreCase("NON")) {
-                System.out.print("Réponse incorrecte. Répondez Oui ou Non : ");
-                reponse = scanner.nextLine();
+            System.out.print("Voulez-vous charger un colis ? (Oui/Non) : ");
+            scanner.nextLine(); // pour nettoyer le buffer
+            String reponse = scanner.nextLine().trim().toUpperCase();
+
+            while (!reponse.equals("OUI") && !reponse.equals("NON")) {
+                System.out.print("Réponse invalide. Répondez par Oui ou Non : ");
+                reponse = scanner.nextLine().trim().toUpperCase();
             }
 
-            if (reponse.equalsIgnoreCase("OUI")) {
-                try {
-                    if (verifierEnergie(5)) {
-                        System.out.print("Entrez la destination : ");
-                        String dest = scanner.nextLine();
-                        chargerColis(dest);
-                    }
-                } catch (EnergieInsuffisanteException e) {
-                    System.out.println(e.getMessage());
-                }
+            if (reponse.equals("OUI")) {
+                System.out.print("Donnez votre destination : ");
+                String destination = scanner.nextLine();
+                chargerColis(destination);
             } else {
-                ajouterHistorique("En attente de colis");
+                ajouterHistorique("En attente de colis.");
             }
         }
     }
+
 
 
     public void faireLivraison(int Destx, int Desty) {

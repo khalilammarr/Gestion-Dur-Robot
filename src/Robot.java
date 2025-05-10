@@ -5,7 +5,7 @@ import exceptions.* ;
 
 
 public abstract class Robot {
-    //ay attribut privé raditou protect bech najemch nekhdem behom f classe les classe lokhrine
+
     protected int x;
     protected int y;
     protected String id;
@@ -106,7 +106,7 @@ public abstract class Robot {
 
     public abstract void deplacer(int x, int y);
 
-    public abstract void effectuertacher();
+    public abstract void effectuertacher() throws RobotEnPanneException, EnergieInsuffisanteException;
 
     public List<String> getHistorique() {
         return historiqueActions;

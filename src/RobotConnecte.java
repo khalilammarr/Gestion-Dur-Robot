@@ -1,4 +1,3 @@
-
 import exceptions.* ;
 
 public abstract class RobotConnecte extends Robot implements Connectable{
@@ -10,7 +9,7 @@ public abstract class RobotConnecte extends Robot implements Connectable{
         this.reseauConnecte = null ;
     }
     public abstract void deplacer(int x,int y);
-    public abstract void effectuertacher();
+    public abstract void effectuertacher() throws RobotEnPanneException, EnergieInsuffisanteException;
     @Override
     public void connecter(String reseau){
         if (energie<5){

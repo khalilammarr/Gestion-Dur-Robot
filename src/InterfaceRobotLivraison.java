@@ -17,12 +17,17 @@ public class InterfaceRobotLivraison extends JFrame {
     private JProgressBar energieBar;
     private JTextArea historiqueArea;
     private ArrayList<String> historique = new ArrayList<>();
+    private ImageIcon robotImage;
 
     public InterfaceRobotLivraison() {
         setTitle("Simulation Robot Livraison");
         setSize(900, 750);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
+
+        // Load and scale robot image
+        Image img = new ImageIcon("robot_icon.png").getImage().getScaledInstance(40, 40, Image.SCALE_SMOOTH);
+        robotImage = new ImageIcon(img);
 
         // Panel grille
         JPanel gridPanel = new JPanel(new GridLayout(GRID_SIZE, GRID_SIZE));
@@ -221,12 +226,17 @@ public class InterfaceRobotLivraison extends JFrame {
         for (int i = 0; i < GRID_SIZE; i++) {
             for (int j = 0; j < GRID_SIZE; j++) {
                 gridButtons[i][j].setText(gridButtons[i][j].getActionCommand());
+                gridButtons[i][j].setIcon(null); // Clear any previous icon
                 gridButtons[i][j].setBackground(Color.WHITE);
             }
         }
-        gridButtons[robotX][robotY].setBackground(enMarche ? Color.CYAN : Color.LIGHT_GRAY);
-        gridButtons[robotX][robotY].setText(enMarche ? "🤖" : "🔌");
 
+        // Set robot appearance
+        gridButtons[robotX][robotY].setText(""); // Remove text
+        gridButtons[robotX][robotY].setIcon(robotImage); // Set icon
+        gridButtons[robotX][robotY].setBackground(enMarche ? Color.CYAN : Color.LIGHT_GRAY);
+
+        // Destination highlight
         if (destinationPoint != null)
             gridButtons[destinationPoint.x][destinationPoint.y].setBackground(Color.YELLOW);
     }

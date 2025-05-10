@@ -1,4 +1,8 @@
 /* f classe hethi les methode deplacer w eli baadha yetkhdmou (énnoné) */
+
+import exceptions.* ;
+
+
 import java.util.Scanner;
 public class RobotLivraison extends RobotConnecte {
     // Constantes d'énergie
@@ -17,81 +21,102 @@ public class RobotLivraison extends RobotConnecte {
 
     @Override
     public void deplacer(int x, int y) {
-        double distance = Math.sqrt(Math.pow(x - this.getX(), 2) + Math.pow(y - this.getY(), 2));
+        double distance = Math.sqrt(Math.pow(x - getX(), 2) + Math.pow(y - getY(), 2));
         if (distance > 100) {
-            //leve exception ya zabri
+            System.out.println("Déplacement trop long : distance maximale = 100 unités.");
+            return;
         }
-        int energieNecessaire = (int) Math.ceil(0.3 * distance);//ceil tkaber fama round tsagher, ama nrmlment hachetna bih akber
-        this.verifierMaintenance();
-        this.verifierEnergie(energieNecessaire);
-        this.setX(x);
-        this.setY(y);
-        this.consommerEnergie(energieNecessaire);
-        heuresUtilisation += (int) Math.ceil(distance / 10);
-        ajouterHistorique("Déplacement vers (" + x + "," + y + ")");
+        try {
+            int energieNecessaire = (int) Math.ceil(0.3 * distance);
+            verifierMaintenance();
+            verifierEnergie(energieNecessaire);
+            setX(x);
+            setY(y);
+            consommerEnergie(energieNecessaire);
+            heuresUtilisation += (int) Math.ceil(distance / 10);
+            ajouterHistorique("Déplacement vers (" + x + "," + y + ")");
+        } catch (EnergieInsuffisanteException | MaintenanceRequiseException e) {
+            System.out.println(e.getMessage());
+        }
     }
 
+
     @Override
-    // lezemha exception :
     public void effectuertacher() {
         Scanner scanner = new Scanner(System.in);
         if (!enMarche) {
-            // exception !
-        } else if (enlivraison) {
-            System.out.print("Veuillez entrer les coordonnées (X,Y) de la destination : ");
-            System.out.print("Donnez X : ");
+            try {
+                throw new RobotEnPanneException();
+            } catch (RobotEnPanneException e) {
+                System.out.println(e.getMessage());
+                return;
+            }
+        }
+
+        if (enlivraison) {
+            System.out.print("Entrez les coordonnées (X,Y) de la destination : ");
             int x = scanner.nextInt();
-            System.out.print("Donnez Y : ");
             int y = scanner.nextInt();
             faireLivraison(x, y);
         } else {
-            System.out.print("Est ce que tu veux charger un nouveau colis ? Oui ou Non ?");
+            System.out.print("Charger un nouveau colis ? (Oui/Non) : ");
+            scanner.nextLine(); // pour vider le buffer
             String reponse = scanner.nextLine();
-            if (!reponse.toUpperCase().equals("OUI") && !reponse.toUpperCase().equals("NON")) {
-                while (!reponse.toUpperCase().equals("OUI") && !reponse.toUpperCase().equals("NON")) {
-                    System.out.print("Réponse incorrecte !");
-                    System.out.print("Donnez votre réponse : Oui ou Non ? ");
-                    reponse = scanner.nextLine();
-                }
+            while (!reponse.equalsIgnoreCase("OUI") && !reponse.equalsIgnoreCase("NON")) {
+                System.out.print("Réponse incorrecte. Répondez Oui ou Non : ");
+                reponse = scanner.nextLine();
             }
-            if ((reponse.toUpperCase()).equals("OUI")) {
-                if (verifierEnergie(5)) {
-                    String destination;
-                    System.out.print("Donnez votre destanation");
-                    destination = scanner.nextLine();
-                    chargerColis(destination);
+
+            if (reponse.equalsIgnoreCase("OUI")) {
+                try {
+                    if (verifierEnergie(5)) {
+                        System.out.print("Entrez la destination : ");
+                        String dest = scanner.nextLine();
+                        chargerColis(dest);
+                    }
+                } catch (EnergieInsuffisanteException e) {
+                    System.out.println(e.getMessage());
                 }
-            } else if ((reponse.toUpperCase()).equals("NON")) {
-                this.ajouterHistorique("En attente de colis");
+            } else {
+                ajouterHistorique("En attente de colis");
             }
         }
     }
+
 
     public void faireLivraison(int Destx, int Desty) {
-        verifierEnergie(ENERGIE_LIVRAISON);
-        enlivraison = true;
-        deplacer(Destx, Desty);
-        consommerEnergie(ENERGIE_LIVRAISON);
-        colisActuel = 0;
-        enlivraison = false;
-        ajouterHistorique("Livraison terminée à " + destination);
-        destination = null;
+        try {
+            verifierEnergie(ENERGIE_LIVRAISON);
+            enlivraison = true;
+            deplacer(Destx, Desty);
+            consommerEnergie(ENERGIE_LIVRAISON);
+            colisActuel = 0;
+            enlivraison = false;
+            ajouterHistorique("Livraison terminée à " + destination);
+            destination = null;
+        } catch (EnergieInsuffisanteException e) {
+            System.out.println(e.getMessage());
+        }
     }
 
+
     public void chargerColis(String destination) {
-        if (enlivraison) {
-            //asba
-        }
-        if (colisActuel != 0) {
-            //aasba lik ya sabri
-        }
+        try {
+            if (enlivraison || colisActuel != 0) {
+                System.out.println("Impossible de charger : déjà en livraison ou colis existant.");
+                return;
+            }
             verifierEnergie(ENERGIE_CHARGEMENT);
             consommerEnergie(ENERGIE_CHARGEMENT);
             colisActuel = 1;
             this.destination = destination;
             enlivraison = true;
             ajouterHistorique("Colis chargé pour destination : " + destination);
+        } catch (EnergieInsuffisanteException e) {
+            System.out.println(e.getMessage());
         }
+    }
+
     public String toString() {
         return String.format("RobotLivraison [ID : %s, Position : (%d,%d), Énergie : %d%%, Heures : %d, Colis : %s, Destination : %s, Connecté : %s]",
                 getId(), getX(), getY(), getEnergie(), getHeuresUtilisation(),

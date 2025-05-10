@@ -1,6 +1,8 @@
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+import exceptions.* ;
+
 
 public abstract class Robot {
     //ay attribut privé raditou protect bech najemch nekhdem behom f classe les classe lokhrine
@@ -54,28 +56,26 @@ public abstract class Robot {
     public void ajouterHistorique(String action) {
         //Nappendiw  l wakt wl date wl message eli je maa l fonction lel liste historiqueActions,
     }
-    public boolean verifierEnergie(int energierequise){ // badalt type de retour
-        if(energierequise>this.energie){
-            //on leve une exception : energie insuffisante
+    public boolean verifierEnergie(int energieRequise) throws EnergieInsuffisanteException {
+        if (energieRequise > this.energie) {
+            throw new EnergieInsuffisanteException(energieRequise, this.energie);
         }
-        return false; // ila an ya2ti ma youkhalef thelika
+        return true;
     }
-    public void verifierMaintenance(){
-        if(this.heuresUtilisation>=100){
-            //on leve un exception maintenance requise
+    public void verifierMaintenance() throws MaintenanceRequiseException {
+        if (this.heuresUtilisation >= 100) {
+            throw new MaintenanceRequiseException(this.heuresUtilisation);
         }
     }
-    public void demarrer(){
 
-        if(energie<10){
-            //on leve exception ManqueEnergie
+    public void demarrer() throws EnergieInsuffisanteException {
+        if (energie < 10) {
+            throw new EnergieInsuffisanteException("démarrer le robot", 10, energie);
         }
-        else{
-            enMarche=true;
-            // l energie tonkes wala le ya zabri
-            ajouterHistorique("Démarrage Du Robot");
-        }
+        enMarche = true;
+        ajouterHistorique("Démarrage du robot");
     }
+
     public void arreter(){
         enMarche=false;
         ajouterHistorique("Arret Du Robot");

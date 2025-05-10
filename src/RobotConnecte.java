@@ -2,6 +2,8 @@
 les fonction deplacer et effectuerraszebi chyabkaw abstract (zid rakez maa el énnoncé mta robot hetha
 w robot eli baadou )*/
 
+import exceptions.* ;
+
 public abstract class RobotConnecte extends Robot implements Connectable{
     public boolean connecte;
     public String reseauConnecte;
@@ -32,16 +34,15 @@ public abstract class RobotConnecte extends Robot implements Connectable{
         this.ajouterHistorique("RobotConnecte deconnecte de "+reseauConnecte);
     }
     @Override
-    public void envoyerDonnees(String donnees) throws Exception {
+    public void envoyerDonnees(String donnees) throws EnergieInsuffisanteException, RobotNonConnecteException {
         if (!connecte) {
-            throw new Exception("Le robot n'est pas connecté.");//exception twali robotexception eli bech naamloha felekher
-        } else {
-            if (energie < 3) {
-                System.out.println("L'énergie doit être >= 3% pour se connecter");
-            } else {
-                consommerEnergie(3);
-                this.ajouterHistorique("Données envoyées : " + donnees);
-            }
+            throw new RobotNonConnecteException("envoyer des données");
         }
+        if (energie < 3) {
+            throw new EnergieInsuffisanteException("envoyer des données", 3, energie);
+        }
+        consommerEnergie(3);
+        ajouterHistorique("Données envoyées : " + donnees);
     }
+
 }

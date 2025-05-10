@@ -1,4 +1,3 @@
-/* f classe hethi les methode deplacer w eli baadha yetkhdmou (énnoné) */
 
 import exceptions.* ;
 

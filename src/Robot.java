@@ -9,21 +9,21 @@ public abstract class Robot {
     protected int x;
     protected int y;
     protected String id;
-    public int heuresUtilisation=0;
+    public int heuresUtilisation = 0;
     protected int energie;
-    public boolean enMarche=false;
+    public boolean enMarche = false;
     protected List<String> historiqueActions;
-    //normalement naamlou constructeur par defaut ?
+
     public Robot(int x, int y, String id) {
         this.x = x;
         this.y = y;
-        this.id=id;
+        this.id = id;
         Scanner scanner = new Scanner(System.in);
         this.energie = 100;
-        this.historiqueActions=new ArrayList<>();
-        this.ajouterHistorique("Robot Créé");/* lena raw mahma ken el robot nafs el jomla f liste mtaa
-        historique weli heya nafs mochkelt tostring */
+        this.historiqueActions = new ArrayList<>();
+        this.ajouterHistorique("Robot Créé");
     }
+
     public void setX(int x) {
         this.x = x;
     }
@@ -35,12 +35,15 @@ public abstract class Robot {
     public int getX() {
         return x;
     }
+
     public int getY() {
         return y;
     }
+
     public String getId() {
         return id;
     }
+
     public int getEnergie() {
         return energie;
     }
@@ -54,14 +57,17 @@ public abstract class Robot {
     }
 
     public void ajouterHistorique(String action) {
-        //Nappendiw  l wakt wl date wl message eli je maa l fonction lel liste historiqueActions,
+        String log = "[" + java.time.LocalDateTime.now() + "] " + action;
+        historiqueActions.add(log);
     }
+
     public boolean verifierEnergie(int energieRequise) throws EnergieInsuffisanteException {
         if (energieRequise > this.energie) {
             throw new EnergieInsuffisanteException(energieRequise, this.energie);
         }
         return true;
     }
+
     public void verifierMaintenance() throws MaintenanceRequiseException {
         if (this.heuresUtilisation >= 100) {
             throw new MaintenanceRequiseException(this.heuresUtilisation);
@@ -76,37 +82,41 @@ public abstract class Robot {
         ajouterHistorique("Démarrage du robot");
     }
 
-    public void arreter(){
-        enMarche=false;
+    public void arreter() {
+        enMarche = false;
         ajouterHistorique("Arret Du Robot");
     }
-    public void consommerEnergie(int quantite){
-        int temp=energie-quantite;
-        if(temp<=0){
-            energie=0;
-        }
-        else{
-            energie=temp;
-        }
-    }
-    public void recharger(int quantite){
-        if (energie+quantite>100){
-            energie=100;
-        }
-        else{
-            energie+=quantite;
+
+    public void consommerEnergie(int quantite) {
+        int temp = energie - quantite;
+        if (temp <= 0) {
+            energie = 0;
+        } else {
+            energie = temp;
         }
     }
-    public abstract void deplacer(int x,int y);
+
+    public void recharger(int quantite) {
+        if (energie + quantite > 100) {
+            energie = 100;
+        } else {
+            energie += quantite;
+        }
+    }
+
+    public abstract void deplacer(int x, int y);
+
     public abstract void effectuertacher();
+
     public List<String> getHistorique() {
         return historiqueActions;
     }
+
     @Override
     public String toString() {
-        return this.getClass().getSimpleName()+ " [ID: " + id + // .getSimpleName tejbdlk esm l class l instance
+        return this.getClass().getSimpleName() + " [ID: " + id +
                 ", Position: (" + x + "," + y + ")" +
                 ", Énergie: " + energie + "%" +
                 ", Heures: " + heuresUtilisation + "]";
-    } // fazet robot industriel mch shiha lezem nejbdou esm l subclass fama robotlivrasionn , robot connecte w zebi
+    }
 }

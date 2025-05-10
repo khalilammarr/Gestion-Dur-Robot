@@ -1,14 +1,10 @@
-/*normalement hasb marit ce robot mech bech ydeplaci w mech chyaamel des taches donc
-les fonction deplacer et effectuerraszebi chyabkaw abstract (zid rakez maa el énnoncé mta robot hetha
-w robot eli baadou )*/
 
 import exceptions.* ;
 
 public abstract class RobotConnecte extends Robot implements Connectable{
     public boolean connecte;
     public String reseauConnecte;
-    public RobotConnecte(int x, int y, String id){ /* majbedch aal energie f constructeur ama
-        lezem nhotha ken bech nkhaliw el constructeur mtaa classe robot akeka */
+    public RobotConnecte(int x, int y, String id){
         super(x, y, id);
         this.connecte = false;
         this.reseauConnecte = null ;

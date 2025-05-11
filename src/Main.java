@@ -16,54 +16,38 @@ public class Main {
             int choix = scanner.nextInt();
 
             switch (choix) {
-                case 0:
-                    creerRobot(scanner);
-                    break;
-                case 1:
-                    demarrerRobot();
-                    break;
-                case 2:
-                    chargerColis();
-                    break;
-                case 3:
-                    effectuerTache();
-                    break;
-                case 4:
-                    deplacerRobot(scanner);
-                    break;
-                case 5:
-                    afficherEtatRobot();
-                    break;
-                case 6:
-                    afficherHistorique();
-                    break;
-                case 7:
-                    rechargerEnergie();
-                    break;
-                case 8:
-                    eteindreRobot();
-                    break;
-                case 9:
-                    System.out.println("Au revoir!");
-                    return;
-                default:
-                    System.out.println("Option invalide. Essayez encore.");
+                case 0: creerRobot(scanner); break;
+                case 1: demarrerRobot(); break;
+                case 2: chargerColis(); break;
+                case 3: effectuerTache(); break;
+                case 4: deplacerRobot(scanner); break;
+                case 5: afficherEtatRobot(); break;
+                case 6: afficherHistorique(); break;
+                case 7: rechargerEnergie(); break;
+                case 8: eteindreRobot(); break;
+                case 9: System.out.println("Au revoir!"); return;
+                case 10: activerModeEconomique(); break;
+                case 11: desactiverModeEconomique(); break;
+                default: System.out.println("Option invalide. Essayez encore.");
             }
+
         }
     }
 
     public static void afficherMenu() {
         System.out.println("\n╔══════════════════════════════════════════════════════════╗");
-        System.out.println("║                 🤖 MENU DU ROBOT LIVRAISON               ║");
-        System.out.println("╠══════════════════════════════════════════════════════════╣");
-        System.out.println("║  0. 🆕 Créer un robot        │  1. 🔑 Démarrer le robot      ║");
-        System.out.println("║  2. 📦 Charger un colis      │  3. 🛠️  Effectuer une tâche   ║");
-        System.out.println("║  4. 🧭 Déplacer le robot     │  5. 📊 Afficher l'état        ║");
-        System.out.println("║  6. 📜 Afficher l'historique │  7. 🔋 Recharger l'énergie    ║");
-        System.out.println("║  8. 📴 Éteindre le robot      │  9. ❌ Quitter                ║");
-        System.out.println("╚══════════════════════════════════════════════════════════╝");
+        System.out.println("║                 🤖 MENU DU ROBOT LIVRAISON                 ║");
+        System.out.println("╠════════════════════════════════════════════════════════════╣");
+        System.out.println("║  0. 🆕 Créer un robot        │  1. 🔑 Démarrer le robot    ║");
+        System.out.println("║  2. 📦 Charger un colis      │  3. 🛠️  Effectuer une tâche ║");
+        System.out.println("║  4. 🧭 Déplacer le robot     │  5. 📊 Afficher l'état      ║");
+        System.out.println("║  6. 📜 Afficher l'historique │  7. 🔋 Recharger l'énergie  ║");
+        System.out.println("║  8. 📴 Éteindre le robot     │  9. ❌ Quitter              ║");
+        System.out.println("║ 10. 🟢 Activer mode éco       │ 11. 🔴 Désactiver mode éco  ║");
+        System.out.println("╚═════════════════════════════════════════════════════════════╝");
         System.out.print("👉 Choisissez une option : ");
     }
+
 
     public static void creerRobot(Scanner scanner) {
         System.out.print("Entrez l'ID du robot : ");
@@ -76,6 +60,26 @@ public class Main {
         robot = new RobotLivraison(x, y, id);
         System.out.println("Robot créé avec succès!");
     }
+
+
+    public static void activerModeEconomique() {
+        if (robot == null) {
+            System.out.println("Vous devez d'abord créer un robot.");
+            return;
+        }
+        robot.activerModeEconomic();
+        System.out.println("Mode économique activé !");
+    }
+
+    public static void desactiverModeEconomique() {
+        if (robot == null) {
+            System.out.println("Vous devez d'abord créer un robot.");
+            return;
+        }
+        robot.DesactiverModeEconomic();
+        System.out.println("Mode économique désactivé !");
+    }
+
 
     public static void demarrerRobot() {
         try {

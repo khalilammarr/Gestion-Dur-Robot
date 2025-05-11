@@ -19,6 +19,7 @@ public class RobotLivraison extends RobotConnecte {
     public String getColis() {
         return colis;
     }
+
     public void setColis(String colis) {
         this.colis = colis;
     }
@@ -56,11 +57,12 @@ public class RobotLivraison extends RobotConnecte {
         }
         try {
             int energieNecessaire = (int) Math.ceil(0.3 * distance);
+            int seuilEnergie = IsModeEconomic ? (int)(energieNecessaire*0.8): energieNecessaire;
             verifierMaintenance();
-            verifierEnergie(energieNecessaire);
+            verifierEnergie(seuilEnergie);
             setX(x);
             setY(y);
-            consommerEnergie(energieNecessaire);
+            consommerEnergie(seuilEnergie);
             heuresUtilisation += (int) Math.ceil(distance / 10);
             ajouterHistorique("Déplacement vers (" + x + "," + y + ")");
         } catch (EnergieInsuffisanteException | MaintenanceRequiseException e) {
@@ -106,10 +108,11 @@ public class RobotLivraison extends RobotConnecte {
 
     public void faireLivraison(int Destx, int Desty) {
         try {
-            verifierEnergie(ENERGIE_LIVRAISON);
+            int seuilEnergie = IsModeEconomic ? (int)(ENERGIE_LIVRAISON*0.8) :ENERGIE_LIVRAISON ;
+            verifierEnergie(seuilEnergie);
             enlivraison = true;
             deplacer(Destx, Desty);
-            consommerEnergie(ENERGIE_LIVRAISON);
+            consommerEnergie(seuilEnergie);
             colisActuel = 0;
             enlivraison = false;
             ajouterHistorique("Livraison terminée à " + destination);
@@ -124,8 +127,9 @@ public class RobotLivraison extends RobotConnecte {
                 System.out.println("Impossible de charger : déjà en livraison ou colis existant.");
                 return;
             }
-            verifierEnergie(ENERGIE_CHARGEMENT);
-            consommerEnergie(ENERGIE_CHARGEMENT);
+            int seuilEnergie = IsModeEconomic ? (int)(ENERGIE_LIVRAISON*0.8) :ENERGIE_LIVRAISON ;
+            verifierEnergie(seuilEnergie);
+            consommerEnergie(seuilEnergie);
             colisActuel = 1;
             this.destination = destination;
             enlivraison = true;

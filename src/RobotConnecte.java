@@ -36,7 +36,8 @@ public abstract class RobotConnecte extends Robot implements Connectable{
         if (energie < 3) {
             throw new EnergieInsuffisanteException("envoyer des données", 3, energie);
         }
-        consommerEnergie(3);
+        int seuilEnergie = IsModeEconomic ? 1 : 3;
+        consommerEnergie(seuilEnergie);
         ajouterHistorique("Données envoyées : " + donnees);
     }
 

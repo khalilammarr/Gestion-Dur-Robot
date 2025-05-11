@@ -13,6 +13,7 @@ public abstract class Robot {
     protected int energie;
     public boolean enMarche = false;
     protected List<String> historiqueActions;
+    protected boolean IsModeEconomic;
 
     public Robot(int x, int y, String id) {
         this.x = x;
@@ -21,6 +22,7 @@ public abstract class Robot {
         Scanner scanner = new Scanner(System.in);
         this.energie = 100;
         this.historiqueActions = new ArrayList<>();
+        IsModeEconomic=false;
         this.ajouterHistorique("Robot Créé");
     }
 
@@ -75,11 +77,22 @@ public abstract class Robot {
     }
 
     public void demarrer() throws EnergieInsuffisanteException {
+        int seuilEnergie = IsModeEconomic ? 8 : 10;
+
         if (energie < 10) {
-            throw new EnergieInsuffisanteException("démarrer le robot", 10, energie);
+            throw new EnergieInsuffisanteException("démarrer le robot", seuilEnergie, energie);
         }
+
+        consommerEnergie(seuilEnergie);
         enMarche = true;
-        ajouterHistorique("Démarrage du robot");
+        ajouterHistorique("Démarrage du robot" + (IsModeEconomic ? " en mode économique" : ""));
+    }
+
+    public void activerModeEconomic(){
+        IsModeEconomic=true;
+    }
+    public void DesactiverModeEconomic(){
+        IsModeEconomic=false;
     }
 
     public void setId(String id) {

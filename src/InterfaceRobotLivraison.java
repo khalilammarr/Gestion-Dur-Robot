@@ -270,7 +270,6 @@ public class InterfaceRobotLivraison extends JFrame {
                     ex.printStackTrace();
                 }
             }
-
             if (energie > 0 && robotLivraison.isEnMarche()) {
                 robotLivraison.ajouterHistorique("Livraison du colis '" + robotLivraison.getColis() + "' à " + robotLivraison.getDestination());
                 JOptionPane.showMessageDialog(this, "Livraison du colis \"" + robotLivraison.getColis() + "\" à " + robotLivraison.getDestination() + " effectuée.");
@@ -281,7 +280,6 @@ public class InterfaceRobotLivraison extends JFrame {
             }
         }).start();
     }
-
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> new InterfaceRobotLivraison().setVisible(true));
     }

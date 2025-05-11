@@ -2,7 +2,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 import exceptions.* ;
-
+import java.io.File;
+import javax.sound.sampled.*;
 
 public abstract class Robot {
 
@@ -98,6 +99,52 @@ public abstract class Robot {
     public void setId(String id) {
         this.id = id;
     }
+
+    public void nettoyer() throws EnergieInsuffisanteException, RobotEnPanneException {
+        if (!enMarche) {
+            throw new RobotEnPanneException();
+        }
+
+        int coutEnergie = IsModeEconomic ? 4 : 6;
+
+        if (energie < coutEnergie) {
+            throw new EnergieInsuffisanteException("nettoyer la zone", coutEnergie, energie);
+        }
+
+        energie -= coutEnergie;
+        ajouterHistorique("Nettoyage de la zone en (" + x + "," + y + ")"
+                + (IsModeEconomic ? " [mode économique]" : ""));
+    }
+
+    public void seNettoyer() throws EnergieInsuffisanteException, RobotEnPanneException {
+        if (!enMarche) {
+            throw new RobotEnPanneException();
+        }
+
+        int coutEnergie = IsModeEconomic ? 2 : 3;
+
+        if (energie < coutEnergie) {
+            throw new EnergieInsuffisanteException("faire un auto-nettoyage", coutEnergie, energie);
+        }
+
+        energie -= coutEnergie;
+        ajouterHistorique("Auto-nettoyage du robot"
+                + (IsModeEconomic ? " [mode économique]" : ""));
+    }
+
+    public void emettreSonPersonnalise() {
+        try {
+            File fichierSon = new File("son/robot.wav");
+            AudioInputStream audioIn = AudioSystem.getAudioInputStream(fichierSon);
+            Clip clip = AudioSystem.getClip();
+            clip.open(audioIn);
+            clip.start();
+            ajouterHistorique("Son personnalisé émis par le robot");
+        } catch (UnsupportedAudioFileException | LineUnavailableException e) {
+            System.out.println("Erreur lors de la lecture du son : " + e.getMessage());
+        }
+    }
+
 
     public void setHeuresUtilisation(int heuresUtilisation) {
         this.heuresUtilisation = heuresUtilisation;

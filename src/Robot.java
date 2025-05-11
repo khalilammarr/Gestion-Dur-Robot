@@ -132,7 +132,7 @@ public abstract class Robot {
                 + (IsModeEconomic ? " [mode économique]" : ""));
     }
 
-    public void emettreSonPersonnalise() {
+    public void chanter() {
         try {
             File fichierSon = new File("son/robot.wav");
             AudioInputStream audioIn = AudioSystem.getAudioInputStream(fichierSon);

@@ -45,10 +45,10 @@ public class Main {
         System.out.println("║  2. 📦 Charger un colis          │  3. 🛠️  Effectuer une tâche         ║");
         System.out.println("║  4. 🧭 Déplacer le robot         │  5. 📊 Afficher l'état              ║");
         System.out.println("║  6. 📜 Afficher l'historique     │  7. 🔋 Recharger l'énergie          ║");
-        System.out.println("║  8. 📴 Éteindre le robot          │  9. ❌ Quitter                      ║");
+        System.out.println("║  8. 📴 Éteindre le robot         │  9. ❌ Quitter                      ║");
         System.out.println("║ 10. 🌱 Activer mode économique   │ 11. 🚫 Désactiver mode économique   ║");
         System.out.println("║ 12. 🧹 Nettoyer la zone          │ 13. 🧽 Nettoyer le robot (auto)     ║");
-        System.out.println("║ 14. 🔊 Émettre un son            │                                     ║");
+        System.out.println("║ 14. 🔊 chanter                   │                                     ║");
         System.out.println("╚════════════════════════════════════════════════════════════════════╝");
         System.out.print("👉 Choisissez une option : ");
     }
@@ -98,7 +98,7 @@ public class Main {
             System.out.println("Vous devez d'abord créer un robot.");
             return;
         }
-        robot.emettreSonPersonnalise();
+        robot.chanter();
     }
 
 

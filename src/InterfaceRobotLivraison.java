@@ -8,7 +8,6 @@ public class InterfaceRobotLivraison extends JFrame {
     private final int GRID_SIZE = 6;
     private JButton[][] gridButtons = new JButton[GRID_SIZE][GRID_SIZE];
     private HashMap<String, Point> destinationMap = new HashMap<>();
-    private int robotX = 0, robotY = 0;
     private String destinationName = null;
     private Point destinationPoint = null;
     private String colis = null;
@@ -17,7 +16,7 @@ public class InterfaceRobotLivraison extends JFrame {
     private JProgressBar energieBar;
     private ArrayList<String> historique = new ArrayList<>();
     private ImageIcon robotImage;
-
+    private RobotLivraison robotLivraison;
     public InterfaceRobotLivraison() {
         setTitle("Simulation Robot Livraison");
         setSize(900, 750);
@@ -90,10 +89,7 @@ public class InterfaceRobotLivraison extends JFrame {
                     if (x < 0 || x >= GRID_SIZE || y < 0 || y >= GRID_SIZE || id.isEmpty()) {
                         throw new IllegalArgumentException();
                     }
-
-                    robotX = x;
-                    robotY = y;
-                    energie = 100;
+                    robotLivraison=new RobotLivraison(x,y,id);
                     energieBar.setValue(energie);
                     energieBar.setForeground(Color.GREEN);
                     enMarche = false;
@@ -245,13 +241,13 @@ public class InterfaceRobotLivraison extends JFrame {
         }
 
         if (robotImage != null) {
-            gridButtons[robotX][robotY].setText("");
-            gridButtons[robotX][robotY].setIcon(robotImage);
+            gridButtons[robotLivraison.getX()][robotLivraison.getY()].setText("");
+            gridButtons[robotLivraison.getX()][robotLivraison.getY()].setIcon(robotImage);
         } else {
-            gridButtons[robotX][robotY].setText("🤖");
+            gridButtons[robotLivraison.getX()][robotLivraison.getY()].setText("🤖");
         }
 
-        gridButtons[robotX][robotY].setBackground(enMarche ? Color.CYAN : Color.LIGHT_GRAY);
+        gridButtons[robotLivraison.getX()][robotLivraison.getY()].setBackground(enMarche ? Color.CYAN : Color.LIGHT_GRAY);
 
         if (destinationPoint != null)
             gridButtons[destinationPoint.x][destinationPoint.y].setBackground(Color.YELLOW);
@@ -259,19 +255,19 @@ public class InterfaceRobotLivraison extends JFrame {
 
     private void moveRobotTo(Point dest) {
         new Thread(() -> {
-            int dx = dest.x - robotX;
-            int dy = dest.y - robotY;
+            int dx = dest.x - robotLivraison.getX();
+            int dy = dest.y - robotLivraison.getY();
 
-            while ((robotX != dest.x || robotY != dest.y) && energie > 0 && enMarche) {
-                if (robotX != dest.x)
-                    robotX += Integer.signum(dx);
-                else if (robotY != dest.y)
-                    robotY += Integer.signum(dy);
+            while ((robotLivraison.getX() != dest.x || robotLivraison.getY() != dest.y) && energie > 0 && enMarche) {
+                if (robotLivraison.getX() != dest.x)
+                    robotLivraison.getX() += Integer.signum(dx);
+                else if (robotLivraison.getY() != dest.y)
+                    robotLivraison.getY() += Integer.signum(dy);
 
                 SwingUtilities.invokeLater(() -> {
                     updateGrid();
                     consommerEnergie(3);
-                    historique.add("Déplacement vers (" + robotX + "," + robotY + ")");
+                    historique.add("Déplacement vers (" + robotLivraison.getX() + "," + robotLivraison.getY() + ")");
                 });
 
                 try {

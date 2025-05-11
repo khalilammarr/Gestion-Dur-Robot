@@ -1,200 +1,133 @@
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
-import exceptions.* ;
 import java.io.File;
 import javax.sound.sampled.*;
+import exceptions.*;
 
 public abstract class Robot {
 
     protected int x;
     protected int y;
     protected String id;
-    public int heuresUtilisation = 0;
     protected int energie;
-    public boolean enMarche = false;
+    protected int heuresUtilisation = 0;
+    protected boolean enMarche = false;
+    protected boolean IsModeEconomic = false;
     protected List<String> historiqueActions;
-    protected boolean IsModeEconomic;
 
     public Robot(int x, int y, String id) {
         this.x = x;
         this.y = y;
         this.id = id;
-        Scanner scanner = new Scanner(System.in);
         this.energie = 100;
         this.historiqueActions = new ArrayList<>();
-        IsModeEconomic=false;
         this.ajouterHistorique("Robot Créé");
     }
 
-    public void setX(int x) {
-        this.x = x;
-    }
+    // Getters & Setters
+    public int getX() { return x; }
+    public int getY() { return y; }
+    public String getId() { return id; }
+    public int getEnergie() { return energie; }
+    public int getHeuresUtilisation() { return heuresUtilisation; }
+    public boolean isEnMarche() { return enMarche; }
+    public List<String> getHistoriqueActions() { return historiqueActions; }
 
-    public void setY(int y) {
-        this.y = y;
-    }
+    public void setX(int x) { this.x = x; }
+    public void setY(int y) { this.y = y; }
+    public void setId(String id) { this.id = id; }
+    public void setEnergie(int energie) { this.energie = Math.min(energie, 100); }
+    public void setHeuresUtilisation(int heures) { this.heuresUtilisation = heures; }
+    public void setEnMarche(boolean enMarche) { this.enMarche = enMarche; }
+    public void setHistoriqueActions(List<String> historique) { this.historiqueActions = historique; }
 
-    public int getX() {
-        return x;
-    }
-
-    public int getY() {
-        return y;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public int getEnergie() {
-        return energie;
-    }
-
-    public int getHeuresUtilisation() {
-        return heuresUtilisation;
-    }
-
-    public List<String> getHistoriqueActions() {
-        return historiqueActions;
-    }
-
+    // Historique
     public void ajouterHistorique(String action) {
         String log = "[" + java.time.LocalDateTime.now() + "] " + action;
         historiqueActions.add(log);
     }
 
+    // Vérifications
     public boolean verifierEnergie(int energieRequise) throws EnergieInsuffisanteException {
-        if (energieRequise > this.energie) {
-            throw new EnergieInsuffisanteException(energieRequise, this.energie);
+        if (energie < energieRequise) {
+            throw new EnergieInsuffisanteException(energieRequise, energie);
         }
         return true;
     }
 
     public void verifierMaintenance() throws MaintenanceRequiseException {
-        if (this.heuresUtilisation >= 100) {
-            throw new MaintenanceRequiseException(this.heuresUtilisation);
+        if (heuresUtilisation >= 100) {
+            throw new MaintenanceRequiseException(heuresUtilisation);
         }
     }
 
+    // Marche/Arrêt
     public void demarrer() throws EnergieInsuffisanteException {
-        int seuilEnergie = IsModeEconomic ? 8 : 10;
-
-        if (energie < 10) {
-            throw new EnergieInsuffisanteException("démarrer le robot", seuilEnergie, energie);
-        }
-
-        consommerEnergie(seuilEnergie);
+        int seuil = IsModeEconomic ? 8 : 10;
+        verifierEnergie(seuil);
+        consommerEnergie(seuil);
         enMarche = true;
         ajouterHistorique("Démarrage du robot" + (IsModeEconomic ? " en mode économique" : ""));
     }
 
-    public void activerModeEconomic(){
-        IsModeEconomic=true;
-    }
-    public void DesactiverModeEconomic(){
-        IsModeEconomic=false;
+    public void arreter() {
+        enMarche = false;
+        ajouterHistorique("Arrêt du robot");
     }
 
-    public void setId(String id) {
-        this.id = id;
-    }
-
+    // Nettoyage
     public void nettoyer() throws EnergieInsuffisanteException, RobotEnPanneException {
-        if (!enMarche) {
-            throw new RobotEnPanneException();
-        }
-
-        int coutEnergie = IsModeEconomic ? 4 : 6;
-
-        if (energie < coutEnergie) {
-            throw new EnergieInsuffisanteException("nettoyer la zone", coutEnergie, energie);
-        }
-
-        energie -= coutEnergie;
-        ajouterHistorique("Nettoyage de la zone en (" + x + "," + y + ")"
-                + (IsModeEconomic ? " [mode économique]" : ""));
+        if (!enMarche) throw new RobotEnPanneException();
+        int cout = IsModeEconomic ? 4 : 6;
+        verifierEnergie(cout);
+        consommerEnergie(cout);
+        ajouterHistorique("Nettoyage à (" + x + "," + y + ")" + (IsModeEconomic ? " [mode économique]" : ""));
     }
 
     public void seNettoyer() throws EnergieInsuffisanteException, RobotEnPanneException {
-        if (!enMarche) {
-            throw new RobotEnPanneException();
-        }
+        if (!enMarche) throw new RobotEnPanneException();
+        int cout = IsModeEconomic ? 2 : 3;
+        verifierEnergie(cout);
+        consommerEnergie(cout);
+        ajouterHistorique("Auto-nettoyage du robot" + (IsModeEconomic ? " [mode économique]" : ""));
+    }
 
-        int coutEnergie = IsModeEconomic ? 2 : 3;
+    // Rechargement
+    public void recharger(int quantite) {
+        energie = Math.min(energie + quantite, 100);
+        ajouterHistorique("Recharge de " + quantite + "%");
+    }
 
-        if (energie < coutEnergie) {
-            throw new EnergieInsuffisanteException("faire un auto-nettoyage", coutEnergie, energie);
-        }
-
-        energie -= coutEnergie;
-        ajouterHistorique("Auto-nettoyage du robot"
-                + (IsModeEconomic ? " [mode économique]" : ""));
+    // Consommation énergie
+    public void consommerEnergie(int quantite) {
+        energie = Math.max(0, energie - quantite);
     }
 
     public void chanter() {
         try {
-            File fichierSon = new File("son/robot.wav");
+            File fichierSon = new File("son/song.wav");
             AudioInputStream audioIn = AudioSystem.getAudioInputStream(fichierSon);
             Clip clip = AudioSystem.getClip();
             clip.open(audioIn);
             clip.start();
             ajouterHistorique("Son personnalisé émis par le robot");
-        } catch (UnsupportedAudioFileException | LineUnavailableException e) {
-            System.out.println("Erreur lors de la lecture du son : " + e.getMessage());
+        } catch (Exception e) {
+            System.out.println("Erreur audio : " + e.getMessage());
         }
     }
-
-
-    public void setHeuresUtilisation(int heuresUtilisation) {
-        this.heuresUtilisation = heuresUtilisation;
+    public void activerModeEconomic() {
+        IsModeEconomic = true;
+        ajouterHistorique("Mode économique activé");
     }
 
-    public void setEnergie(int energie) {
-        this.energie = energie;
+    public void desactiverModeEconomic() {
+        IsModeEconomic = false;
+        ajouterHistorique("Mode économique désactivé");
     }
 
-    public void setEnMarche(boolean enMarche) {
-        this.enMarche = enMarche;
-    }
-
-    public boolean isEnMarche() {
-        return enMarche;
-    }
-
-    public void setHistoriqueActions(List<String> historiqueActions) {
-        this.historiqueActions = historiqueActions;
-    }
-
-    public void arreter() {
-        enMarche = false;
-        ajouterHistorique("Arret Du Robot");
-    }
-
-    public void consommerEnergie(int quantite) {
-        int temp = energie - quantite;
-        if (temp <= 0) {
-            energie = 0;
-        } else {
-            energie = temp;
-        }
-    }
-
-    public void recharger(int quantite) {
-        if (energie + quantite > 100) {
-            energie = 100;
-        } else {
-            energie += quantite;
-        }
-    }
-
+    // Abstract
     public abstract void deplacer(int x, int y);
-
     public abstract void effectuertacher() throws RobotEnPanneException, EnergieInsuffisanteException;
-
-    public List<String> getHistorique() {
-        return historiqueActions;
-    }
 
     @Override
     public String toString() {

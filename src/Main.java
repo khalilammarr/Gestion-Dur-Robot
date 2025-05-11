@@ -98,7 +98,7 @@ public class Main {
             System.out.println("Vous devez d'abord créer un robot.");
             return;
         }
-        robot.emettreSon(); // ou emettreSonPersonnalise()
+        robot.emettreSonPersonnalise();
     }
 
 

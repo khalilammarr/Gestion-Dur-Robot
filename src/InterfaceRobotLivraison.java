@@ -12,9 +12,7 @@ public class InterfaceRobotLivraison extends JFrame {
     private Point destinationPoint = null;
     private String colis = null;
     private int energie = 100;
-    private boolean enMarche = false;
     private JProgressBar energieBar;
-    private ArrayList<String> historique = new ArrayList<>();
     private ImageIcon robotImage;
     private RobotLivraison robotLivraison;
     public InterfaceRobotLivraison() {
@@ -92,21 +90,18 @@ public class InterfaceRobotLivraison extends JFrame {
                     robotLivraison=new RobotLivraison(x,y,id);
                     energieBar.setValue(energie);
                     energieBar.setForeground(Color.GREEN);
-                    enMarche = false;
                     updateGrid();
-                    historique.clear();
-                    historique.add("Robot créé à (" + x + ", " + y + ") avec ID: " + id);
                     JOptionPane.showMessageDialog(this, "Robot \"" + id + "\" créé à (" + x + "," + y + ")");
                 } catch (Exception ex) {
                     JOptionPane.showMessageDialog(this, "Entrée invalide !");
                 }
             }
         });
-
         btnDemarrer.addActionListener(e -> {
-            if (energie > 0) {
-                enMarche = true;
-                historique.add("Robot démarré");
+            if (robotLivraison.getEnergie()> 10) {
+                robotLivraison.setEnMarche(true);
+                robotLivraison.ajouterHistorique("Robot démarré");
+                robotLivraison.consommerEnergie(10);
                 updateGrid();
                 JOptionPane.showMessageDialog(this, "Robot démarré.");
             } else {
@@ -115,14 +110,14 @@ public class InterfaceRobotLivraison extends JFrame {
         });
 
         btnArreter.addActionListener(e -> {
-            enMarche = false;
-            historique.add("Robot arrêté");
+            robotLivraison.setEnMarche(false);
+            robotLivraison.ajouterHistorique("Robot arrêté");
             updateGrid();
             JOptionPane.showMessageDialog(this, "Robot arrêté.");
         });
 
         btnCharger.addActionListener(e -> {
-            if (!enMarche) {
+            if (!robotLivraison.isEnMarche()) {
                 JOptionPane.showMessageDialog(this, "Le robot doit être démarré pour charger un colis.");
                 return;
             }
@@ -136,13 +131,12 @@ public class InterfaceRobotLivraison extends JFrame {
 
             int result = JOptionPane.showConfirmDialog(this, panel, "Charger Colis", JOptionPane.OK_CANCEL_OPTION);
             if (result == JOptionPane.OK_OPTION) {
-                colis = fieldColis.getText();
-                destinationName = fieldDest.getText().toUpperCase();
-
-                if (destinationMap.containsKey(destinationName)) {
-                    destinationPoint = destinationMap.get(destinationName);
-                    historique.add("Colis '" + colis + "' chargé pour " + destinationName);
-                    JOptionPane.showMessageDialog(this, "Colis \"" + colis + "\" chargé pour " + destinationName);
+                robotLivraison.setColis(fieldColis.getText());
+                robotLivraison.setDestination( fieldDest.getText().toUpperCase());
+                if (destinationMap.containsKey(robotLivraison.getDestination())) { // nbadlouha b lista nchoufou mawjouda fel lista wala le
+                    destinationPoint = destinationMap.get(robotLivraison.getDestination());
+                    robotLivraison.ajouterHistorique("Colis '" + robotLivraison.getColis() + "' chargé pour " + robotLivraison.getDestination());
+                    JOptionPane.showMessageDialog(this, "Colis \"" + robotLivraison.getColis() + "\" chargé pour " + robotLivraison.getDestination());
                     highlightDestination(destinationPoint);
                 } else {
                     JOptionPane.showMessageDialog(this, "Destination invalide !");
@@ -151,7 +145,7 @@ public class InterfaceRobotLivraison extends JFrame {
         });
 
         btnLivrer.addActionListener(e -> {
-            if (!enMarche) {
+            if (!robotLivraison.isEnMarche()) {
                 JOptionPane.showMessageDialog(this, "Le robot doit être démarré pour livrer.");
                 return;
             }
@@ -159,22 +153,22 @@ public class InterfaceRobotLivraison extends JFrame {
                 JOptionPane.showMessageDialog(this, "Aucune destination définie !");
                 return;
             }
+            //robotLivraison.faireLivraison(destinationPoint.x, destinationPoint.y);
             moveRobotTo(destinationPoint);
         });
-
         btnConfig.addActionListener(e -> {
             JTextArea area = new JTextArea();
-            historique.forEach(entry -> area.append(entry + "\n"));
+            robotLivraison.getHistorique().forEach(entry -> area.append(entry + "\n"));
             area.setEditable(false);
             JScrollPane scrollPane = new JScrollPane(area);
             scrollPane.setPreferredSize(new Dimension(400, 200));
 
             JButton rechargeBtn = new JButton("Recharger");
             rechargeBtn.addActionListener(ev -> {
-                energie = 100;
+                robotLivraison.setEnergie(100);
                 energieBar.setValue(energie);
                 energieBar.setForeground(Color.GREEN);
-                historique.add("Batterie rechargée à 100%");
+                robotLivraison.ajouterHistorique("Batterie rechargée à 100%");
                 updateGrid();
             });
 
@@ -213,8 +207,8 @@ public class InterfaceRobotLivraison extends JFrame {
         if (energie < 10)
             energieBar.setForeground(Color.RED);
         if (energie == 0) {
-            enMarche = false;
-            historique.add("Robot éteint automatiquement : batterie vide");
+            robotLivraison.setEnMarche(false) ;
+            robotLivraison.ajouterHistorique("Robot éteint automatiquement : batterie vide");
             SwingUtilities.invokeLater(() -> {
                 updateGrid();
                 JOptionPane.showMessageDialog(this, "Batterie vide. Robot arrêté.");
@@ -247,7 +241,7 @@ public class InterfaceRobotLivraison extends JFrame {
             gridButtons[robotLivraison.getX()][robotLivraison.getY()].setText("🤖");
         }
 
-        gridButtons[robotLivraison.getX()][robotLivraison.getY()].setBackground(enMarche ? Color.CYAN : Color.LIGHT_GRAY);
+        gridButtons[robotLivraison.getX()][robotLivraison.getY()].setBackground(robotLivraison.isEnMarche() ? Color.CYAN : Color.LIGHT_GRAY);
 
         if (destinationPoint != null)
             gridButtons[destinationPoint.x][destinationPoint.y].setBackground(Color.YELLOW);
@@ -258,16 +252,16 @@ public class InterfaceRobotLivraison extends JFrame {
             int dx = dest.x - robotLivraison.getX();
             int dy = dest.y - robotLivraison.getY();
 
-            while ((robotLivraison.getX() != dest.x || robotLivraison.getY() != dest.y) && energie > 0 && enMarche) {
+            while ((robotLivraison.getX() != dest.x || robotLivraison.getY() != dest.y) && energie > 0 && robotLivraison.isEnMarche()) {
                 if (robotLivraison.getX() != dest.x)
-                    robotLivraison.getX() += Integer.signum(dx);
+                    robotLivraison.setX(robotLivraison.getX() + Integer.signum(dx));
                 else if (robotLivraison.getY() != dest.y)
-                    robotLivraison.getY() += Integer.signum(dy);
+                    robotLivraison.setY(robotLivraison.getY() + Integer.signum(dy));
 
                 SwingUtilities.invokeLater(() -> {
                     updateGrid();
                     consommerEnergie(3);
-                    historique.add("Déplacement vers (" + robotLivraison.getX() + "," + robotLivraison.getY() + ")");
+                    robotLivraison.ajouterHistorique("Déplacement vers (" + robotLivraison.getX() + "," + robotLivraison.getY() + ")");
                 });
 
                 try {
@@ -277,11 +271,11 @@ public class InterfaceRobotLivraison extends JFrame {
                 }
             }
 
-            if (energie > 0 && enMarche) {
-                historique.add("Livraison du colis '" + colis + "' à " + destinationName);
-                JOptionPane.showMessageDialog(this, "Livraison du colis \"" + colis + "\" à " + destinationName + " effectuée.");
-                colis = null;
-                destinationName = null;
+            if (energie > 0 && robotLivraison.isEnMarche()) {
+                robotLivraison.ajouterHistorique("Livraison du colis '" + robotLivraison.getColis() + "' à " + robotLivraison.getDestination());
+                JOptionPane.showMessageDialog(this, "Livraison du colis \"" + robotLivraison.getColis() + "\" à " + robotLivraison.getDestination() + " effectuée.");
+                robotLivraison.setColis(null);
+                robotLivraison.setDestination(null) ;
                 destinationPoint = null;
                 updateGrid();
             }

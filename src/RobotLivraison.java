@@ -9,12 +9,42 @@ public class RobotLivraison extends RobotConnecte {
     protected int colisActuel;
     protected String destination;
     protected boolean enlivraison;
-
+    protected String colis;
     public RobotLivraison(int x, int y, String id) {
         super(x, y, id);
         this.colisActuel = 0;
         this.destination = null;
         this.enlivraison = false;
+    }
+    public String getColis() {
+        return colis;
+    }
+    public void setColis(String colis) {
+        this.colis = colis;
+    }
+
+    public int getColisActuel() {
+        return colisActuel;
+    }
+
+    public void setColisActuel(int colisActuel) {
+        this.colisActuel = colisActuel;
+    }
+
+    public String getDestination() {
+        return destination;
+    }
+
+    public void setDestination(String destination) {
+        this.destination = destination;
+    }
+
+    public boolean isEnlivraison() {
+        return enlivraison;
+    }
+
+    public void setEnlivraison(boolean enlivraison) {
+        this.enlivraison = enlivraison;
     }
 
     @Override

@@ -82,6 +82,30 @@ public abstract class Robot {
         ajouterHistorique("Démarrage du robot");
     }
 
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public void setHeuresUtilisation(int heuresUtilisation) {
+        this.heuresUtilisation = heuresUtilisation;
+    }
+
+    public void setEnergie(int energie) {
+        this.energie = energie;
+    }
+
+    public void setEnMarche(boolean enMarche) {
+        this.enMarche = enMarche;
+    }
+
+    public boolean isEnMarche() {
+        return enMarche;
+    }
+
+    public void setHistoriqueActions(List<String> historiqueActions) {
+        this.historiqueActions = historiqueActions;
+    }
+
     public void arreter() {
         enMarche = false;
         ajouterHistorique("Arret Du Robot");

@@ -17,10 +17,12 @@ public class InterfaceRobotLivraison extends JFrame {
     private String[][] cellLabels = new String[GRID_SIZE][GRID_SIZE]; // Store original cell labels
 
     public InterfaceRobotLivraison() {
+        setLocationRelativeTo(null);
         setTitle("Simulation Robot Livraison");
         setSize(1400, 750);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
+        setLocationRelativeTo(null);
 
         // Load and scale robot image
         try {
@@ -32,20 +34,28 @@ public class InterfaceRobotLivraison extends JFrame {
 
         // Panel grille
         JPanel gridPanel = new JPanel(new GridLayout(GRID_SIZE, GRID_SIZE));
-        char letter = 'A';
+        String[] lieuxTunisie = {
+                "Tunis", "La Marsa", "Sidi Bou Saïd", "Ariana", "Carthage", "Le Bardo",
+                "Sfax", "Gabès", "Djerba", "Houmt Souk", "Midoun", "Zarzis",
+                "Nabeul", "Hammamet", "Kelibia", "Korba", "Sousse", "Kantaoui",
+                "Monastir", "Mahdia", "Kairouan", "Tozeur", "Nefta", "Douz",
+                "Gafsa", "Kébili", "Tataouine", "Médenine", "El Jem", "Testour",
+                "Bizerte", "Tabarka", "Beja", "Le Kef", "Siliana", "Jendouba"
+        };
+
+        int index = 0;
         for (int i = 0; i < GRID_SIZE; i++) {
             for (int j = 0; j < GRID_SIZE; j++) {
-                String name = "" + letter + j;
+                String name = lieuxTunisie[index++];
                 JButton btn = new JButton(name);
                 btn.setBackground(Color.WHITE);
                 btn.setFont(new Font("Arial", Font.PLAIN, 12));
                 destinationMap.put(name.toUpperCase(), new Point(i, j));
                 gridButtons[i][j] = btn;
-                cellLabels[i][j] = name; // Store the original label
                 gridPanel.add(btn);
             }
-            letter++;
         }
+
         add(gridPanel, BorderLayout.CENTER);
 
         // Panel de contrôle

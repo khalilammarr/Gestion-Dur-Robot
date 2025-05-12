@@ -4,6 +4,8 @@ import java.awt.event.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import exceptions.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class InterfaceRobotLivraison extends JFrame {
     private final int GRID_SIZE = 6;
@@ -136,14 +138,14 @@ public class InterfaceRobotLivraison extends JFrame {
             JTextField fieldDest = new JTextField();
             panel.add(new JLabel("Nom du colis :"));
             panel.add(fieldColis);
-            panel.add(new JLabel("Destination (ex: B2) :"));
+            panel.add(new JLabel("Destination (ex: Sfax) :"));
             panel.add(fieldDest);
 
             int result = JOptionPane.showConfirmDialog(this, panel, "Charger Colis", JOptionPane.OK_CANCEL_OPTION);
             if (result == JOptionPane.OK_OPTION) {
                 robotLivraison.setColis(fieldColis.getText());
                 robotLivraison.setDestination( fieldDest.getText().toUpperCase());
-                if (destinationMap.containsKey(robotLivraison.getDestination())) { // nbadlouha b lista nchoufou mawjouda fel lista wala le
+                if (destinationMap.containsKey(robotLivraison.getDestination())) {
                     destinationPoint = destinationMap.get(robotLivraison.getDestination());
                     robotLivraison.ajouterHistorique("Colis '" + robotLivraison.getColis() + "' chargé pour " + robotLivraison.getDestination());
                     JOptionPane.showMessageDialog(this, "Colis \"" + robotLivraison.getColis() + "\" chargé pour " + robotLivraison.getDestination());
@@ -168,7 +170,14 @@ public class InterfaceRobotLivraison extends JFrame {
         });
         btnConfig.addActionListener(e -> {
             JTextArea area = new JTextArea();
-            robotLivraison.getHistoriqueActions().forEach(entry -> area.append(entry + "\n"));
+
+            // Using traditional for loop instead of forEach
+            List<String> historique = robotLivraison.getHistoriqueActions();
+            for (int i = 0; i < historique.size(); i++) {
+                String entry = historique.get(i);
+                area.append(entry + "\n");
+            }
+
             area.setEditable(false);
             JScrollPane scrollPane = new JScrollPane(area);
             scrollPane.setPreferredSize(new Dimension(400, 200));

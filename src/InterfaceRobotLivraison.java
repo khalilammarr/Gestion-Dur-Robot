@@ -18,7 +18,7 @@ public class InterfaceRobotLivraison extends JFrame {
 
     public InterfaceRobotLivraison() {
         setTitle("Simulation Robot Livraison");
-        setSize(900, 750);
+        setSize(1400, 750);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
 

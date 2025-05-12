@@ -408,15 +408,15 @@ public class InterfaceRobotLivraison extends JFrame {
 
             int nextX = robotLivraison.getX();
             int nextY = robotLivraison.getY();
-
-            // Calculate next step
-            if (nextX != dest.x)
-                nextX += Integer.signum(dest.x - nextX);
-            else if (nextY != dest.y)
-                nextY += Integer.signum(dest.y - nextY);
-
-            // Move robot
-            robotLivraison.deplacer(nextX, nextY);
+            if (nextX < dest.x) {
+                nextX += 1;
+            } else if (nextX > dest.x) {
+                nextX -= 1;
+            } else if (nextY < dest.y) {
+                nextY += 1;
+            } else if (nextY > dest.y) {
+                nextY -= 1;
+            }
 
             // Update UI
             updateGrid();

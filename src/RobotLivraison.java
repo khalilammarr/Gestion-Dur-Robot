@@ -57,12 +57,11 @@ public class RobotLivraison extends RobotConnecte {
         }
         try {
             int energieNecessaire = (int) Math.ceil(0.3 * distance);
-            int seuilEnergie = IsModeEcologique ? (int)(energieNecessaire*0.8): energieNecessaire;
             verifierMaintenance();
-            verifierEnergie(seuilEnergie);
+            verifierEnergie(energieNecessaire);
             setX(x);
             setY(y);
-            consommerEnergie(seuilEnergie);
+            consommerEnergie(energieNecessaire);
             heuresUtilisation += (int) Math.ceil(distance / 10);
             ajouterHistorique("Déplacement vers (" + x + "," + y + ")");
         } catch (EnergieInsuffisanteException | MaintenanceRequiseException e) {

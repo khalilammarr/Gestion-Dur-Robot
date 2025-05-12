@@ -311,6 +311,16 @@ public class InterfaceRobotLivraison extends JFrame {
                 JOptionPane.showMessageDialog(this, "Aucun robot disponible !");
             }
         });
+        JButton btnDesactiverEco = new JButton("Stop Éco");
+        btnDesactiverEco.addActionListener(e -> {
+            if (robotLivraison != null) {
+                robotLivraison.desactiverModeEcologique();
+                JOptionPane.showMessageDialog(this, "Mode écologique désactivé !");
+            } else {
+                JOptionPane.showMessageDialog(this, "Aucun robot disponible !");
+            }
+        });
+
 
         controlPanel.add(btnCreer);
         controlPanel.add(btnDemarrer);
@@ -323,6 +333,7 @@ public class InterfaceRobotLivraison extends JFrame {
         controlPanel.add(btnChanter);
         controlPanel.add(btnConfig);
         controlPanel.add(btnEco);
+        controlPanel.add(btnDesactiverEco);
 
 
         // Affichage simple de l'énergie

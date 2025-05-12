@@ -400,24 +400,17 @@ public class InterfaceRobotLivraison extends JFrame {
                 connectionLabel.setForeground(Color.RED);
             }
         }
-
-        // Highlight destination if there is one
-        if (destinationPoint != null) {
+        if(destinationPoint != null) {
             gridButtons[destinationPoint.x][destinationPoint.y].setBackground(Color.YELLOW);
         }
     }
-
     private void moveRobotTo(Point dest) {
         Timer timer = new Timer(300, null); // 300ms delay between moves
-
         timer.addActionListener(e -> {
             if (!robotLivraison.isEnMarche() || robotLivraison.getEnergie() <= 0 ||
                     (robotLivraison.getX() == dest.x && robotLivraison.getY() == dest.y)) {
-
-                // Stop timer if robot reached destination or is out of energy or stopped
+                // Stop timer when destination is reached or when robot is inactive or energy is depleted
                 timer.stop();
-
-                // If reached and still has energy, finalize delivery
                 if (robotLivraison.getEnergie() > 0 && robotLivraison.isEnMarche()) {
                     robotLivraison.ajouterHistorique("Livraison du colis '" + robotLivraison.getColis() + "' à " + robotLivraison.getDestination());
                     JOptionPane.showMessageDialog(null, "Livraison du colis \"" + robotLivraison.getColis() + "\" à " + robotLivraison.getDestination() + " effectuée.");
@@ -426,12 +419,13 @@ public class InterfaceRobotLivraison extends JFrame {
                     destinationPoint = null;
                     updateGrid();
                 }
-
                 return;
             }
 
+            // Determine the next step towards destination (x, y)
             int nextX = robotLivraison.getX();
             int nextY = robotLivraison.getY();
+
             if (nextX < dest.x) {
                 nextX += 1;
             } else if (nextX > dest.x) {
@@ -441,28 +435,24 @@ public class InterfaceRobotLivraison extends JFrame {
             } else if (nextY > dest.y) {
                 nextY -= 1;
             }
-
-            robotLivraison.setX(nextX);
-            robotLivraison.setY(nextY);
-
-            // Update UI
+            robotLivraison.deplacer(nextX, nextY);
             updateGrid();
             energieLabel.setText("Énergie actuelle : " + robotLivraison.getEnergie() + "%");
+            energieLabel.setForeground(Color.BLACK); // Reset color
 
-            // Energy warnings
-            if (robotLivraison.getEnergie() < 30)
+            // Handle energy warnings
+            if (robotLivraison.getEnergie() < 30) {
                 energieLabel.setForeground(Color.ORANGE);
-            if (robotLivraison.getEnergie() < 10)
+            }
+            if (robotLivraison.getEnergie() < 10) {
                 energieLabel.setForeground(Color.RED);
+            }
             if (robotLivraison.getEnergie() == 0) {
                 JOptionPane.showMessageDialog(null, "Batterie vide. Robot arrêté.");
             }
         });
-
         timer.start();
     }
-
-
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> new InterfaceRobotLivraison().setVisible(true));
     }

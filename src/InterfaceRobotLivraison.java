@@ -28,6 +28,8 @@ public class InterfaceRobotLivraison extends JFrame {
         setLayout(new BorderLayout());
         setLocationRelativeTo(null);
 
+        JPanel ctrlPanel = new JPanel();
+
         // Load and scale robot image
         try {
             robotImage = loadRobotImage("/robot_icon.png"); // Ensure the image is in resources or root
@@ -110,10 +112,12 @@ public class InterfaceRobotLivraison extends JFrame {
             }
         });
         btnDemarrer.addActionListener(e -> {
+            int seuil = robotLivraison.IsModeEcologique ? 8 : 10;
             if (robotLivraison.getEnergie()> 10) {
                 robotLivraison.setEnMarche(true);
                 robotLivraison.ajouterHistorique("Robot démarré");
-                robotLivraison.consommerEnergie(10);
+                robotLivraison.consommerEnergie(seuil);
+                energieLabel.setText("Énergie actuelle : " + robotLivraison.getEnergie() + "%");
                 updateGrid();
                 JOptionPane.showMessageDialog(this, "Robot démarré.");
             } else {
@@ -129,6 +133,7 @@ public class InterfaceRobotLivraison extends JFrame {
         });
 
         btnCharger.addActionListener(e -> {
+            int seuilEnergie = robotLivraison.IsModeEcologique ? (int)(robotLivraison.ENERGIE_LIVRAISON*0.8) :robotLivraison.ENERGIE_LIVRAISON ;
             if (!robotLivraison.isEnMarche()) {
                 JOptionPane.showMessageDialog(this, "Le robot doit être démarré pour charger un colis.");
                 return;
@@ -143,6 +148,8 @@ public class InterfaceRobotLivraison extends JFrame {
 
             int result = JOptionPane.showConfirmDialog(this, panel, "Charger Colis", JOptionPane.OK_CANCEL_OPTION);
             if (result == JOptionPane.OK_OPTION) {
+                robotLivraison.consommerEnergie(seuilEnergie);
+                energieLabel.setText("Énergie actuelle : " + robotLivraison.getEnergie() + "%");
                 robotLivraison.setColis(fieldColis.getText());
                 robotLivraison.setDestination( fieldDest.getText().toUpperCase());
                 if (destinationMap.containsKey(robotLivraison.getDestination())) {
@@ -214,6 +221,7 @@ public class InterfaceRobotLivraison extends JFrame {
                 return;
             }
                 robotLivraison.chanter();
+            energieLabel.setText("Énergie actuelle : " + robotLivraison.getEnergie() + "%");
                 JOptionPane.showMessageDialog(this, "Le robot chante !",
                         "Information", JOptionPane.INFORMATION_MESSAGE);
 
@@ -239,6 +247,7 @@ public class InterfaceRobotLivraison extends JFrame {
                 try {
                     robotLivraison.connecter(reseau);
                     connectionLabel.setText("État: Connecté à " + reseau);
+                    energieLabel.setText("Énergie actuelle : " + robotLivraison.getEnergie() + "%");
                     connectionLabel.setForeground(Color.GREEN);
                     JOptionPane.showMessageDialog(this, "Robot connecté au réseau: " + reseau);
                 } catch (Exception ex) {
@@ -278,6 +287,7 @@ public class InterfaceRobotLivraison extends JFrame {
             if (donnees != null && !donnees.trim().isEmpty()) {
                 try {
                     robotLivraison.envoyerDonnees(donnees);
+                    energieLabel.setText("Énergie actuelle : " + robotLivraison.getEnergie() + "%");
                     updateGrid(); // Update to reflect energy consumption
                     JOptionPane.showMessageDialog(this, "Données envoyées avec succès.");
                 } catch (RobotNonConnecteException ex) {
@@ -287,6 +297,15 @@ public class InterfaceRobotLivraison extends JFrame {
                 } catch (Exception ex) {
                     JOptionPane.showMessageDialog(this, "Erreur: " + ex.getMessage());
                 }
+            }
+        });
+        JButton btnEco = new JButton("Mode Éco");
+        btnEco.addActionListener(e -> {
+            if (robotLivraison != null) {
+                robotLivraison.activerModeEcologique();
+                JOptionPane.showMessageDialog(this, "Mode écologique activé !");
+            } else {
+                JOptionPane.showMessageDialog(this, "Aucun robot disponible !");
             }
         });
 
@@ -300,6 +319,9 @@ public class InterfaceRobotLivraison extends JFrame {
         controlPanel.add(btnEnvoyerDonnees);
         controlPanel.add(btnChanter);
         controlPanel.add(btnConfig);
+        controlPanel.add(btnEco);
+
+
         // Affichage simple de l'énergie
         energieLabel = new JLabel("Énergie actuelle : --%");
         connectionLabel = new JLabel("État: Non connecté");
@@ -313,6 +335,8 @@ public class InterfaceRobotLivraison extends JFrame {
 
         add(controlPanel, BorderLayout.SOUTH);
     }
+
+
 
     private ImageIcon loadRobotImage(String path) throws Exception {
         java.net.URL imgURL = getClass().getResource(path);
@@ -417,6 +441,9 @@ public class InterfaceRobotLivraison extends JFrame {
             } else if (nextY > dest.y) {
                 nextY -= 1;
             }
+
+            robotLivraison.setX(nextX);
+            robotLivraison.setY(nextY);
 
             // Update UI
             updateGrid();

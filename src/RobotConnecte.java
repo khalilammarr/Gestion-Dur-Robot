@@ -16,9 +16,10 @@ public abstract class RobotConnecte extends Robot implements Connectable{
             System.out.println("La connexion à un réseau nécessite au moins 5% de l'énergie");
         }
         else {
+            int seuil = IsModeEcologique ? 2 : 4;
             connecte = true;
             reseauConnecte = reseau;
-            consommerEnergie(5);
+            consommerEnergie(seuil);
             this.ajouterHistorique("Robot connecte à: "+reseauConnecte);
         }
     }

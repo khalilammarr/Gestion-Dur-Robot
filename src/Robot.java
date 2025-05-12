@@ -104,6 +104,7 @@ public abstract class Robot {
     }
 
     public void chanter() {
+        int seuil = IsModeEcologique ? 2 : 4;
         try {
             File fichierSon = new File("son/song.wav");
             AudioInputStream audioIn = AudioSystem.getAudioInputStream(fichierSon);
@@ -111,6 +112,7 @@ public abstract class Robot {
             clip.open(audioIn);
             clip.start();
             ajouterHistorique("Son personnalisé émis par le robot");
+            consommerEnergie(seuil);
         } catch (Exception e) {
             System.out.println("Erreur audio : " + e.getMessage());
         }

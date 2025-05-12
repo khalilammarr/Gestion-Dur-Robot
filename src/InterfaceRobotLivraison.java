@@ -15,6 +15,8 @@ public class InterfaceRobotLivraison extends JFrame {
     private JLabel energieLabel;
     private JLabel connectionLabel;
     private String[][] cellLabels = new String[GRID_SIZE][GRID_SIZE]; // Store original cell labels
+    private String[][] nomsBoutons = new String[GRID_SIZE][GRID_SIZE];
+
 
     public InterfaceRobotLivraison() {
         setLocationRelativeTo(null);
@@ -48,6 +50,7 @@ public class InterfaceRobotLivraison extends JFrame {
             for (int j = 0; j < GRID_SIZE; j++) {
                 String name = lieuxTunisie[index++];
                 JButton btn = new JButton(name);
+                nomsBoutons[i][j] = name;
                 btn.setBackground(Color.WHITE);
                 btn.setFont(new Font("Arial", Font.PLAIN, 12));
                 destinationMap.put(name.toUpperCase(), new Point(i, j));
@@ -325,7 +328,7 @@ public class InterfaceRobotLivraison extends JFrame {
         // Reset all cells to their original state
         for (int i = 0; i < GRID_SIZE; i++) {
             for (int j = 0; j < GRID_SIZE; j++) {
-                gridButtons[i][j].setText(cellLabels[i][j]);
+                gridButtons[i][j].setText(nomsBoutons[i][j]);
                 gridButtons[i][j].setIcon(null);
                 gridButtons[i][j].setBackground(Color.WHITE);
             }

@@ -173,7 +173,29 @@ public class InterfaceRobotLivraison extends JFrame {
 
             JOptionPane.showMessageDialog(this, configPanel, "Configuration", JOptionPane.PLAIN_MESSAGE);
         });
+        btnChanter.addActionListener(e -> {
+            if (robotLivraison == null) {
+                JOptionPane.showMessageDialog(this, "Erreur: Robot non créé !",
+                        "Erreur", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
 
+            if (!robotLivraison.enMarche) {
+                JOptionPane.showMessageDialog(this, "Erreur: Robot non démarré !",
+                        "Erreur", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            if (!robotLivraison.connecte) {
+                JOptionPane.showMessageDialog(this, "Erreur: Robot non connecté !",
+                        "Erreur", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+                robotLivraison.chanter();
+                JOptionPane.showMessageDialog(this, "Le robot chante !",
+                        "Information", JOptionPane.INFORMATION_MESSAGE);
+
+        });
         btnConnecter.addActionListener(e -> {
             if (robotLivraison == null) {
                 JOptionPane.showMessageDialog(this, "Veuillez d'abord créer un robot.");

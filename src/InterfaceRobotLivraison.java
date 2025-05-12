@@ -384,60 +384,57 @@ public class InterfaceRobotLivraison extends JFrame {
     }
 
     private void moveRobotTo(Point dest) {
-        new Thread(() -> {
-            while ((robotLivraison.getX() != dest.x || robotLivraison.getY() != dest.y)
-                    && robotLivraison.getEnergie() > 0
-                    && robotLivraison.isEnMarche()) {
+        Timer timer = new Timer(300, null); // 300ms delay between moves
 
-                int nextX = robotLivraison.getX();
-                int nextY = robotLivraison.getY();
+        timer.addActionListener(e -> {
+            if (!robotLivraison.isEnMarche() || robotLivraison.getEnergie() <= 0 ||
+                    (robotLivraison.getX() == dest.x && robotLivraison.getY() == dest.y)) {
 
-                // Move towards the destination
-                if (nextX != dest.x)
-                    nextX += Integer.signum(dest.x - nextX);
-                else if (nextY != dest.y)
-                    nextY += Integer.signum(dest.y - nextY);
+                // Stop timer if robot reached destination or is out of energy or stopped
+                timer.stop();
 
-                // Move the robot to the next position
-                robotLivraison.deplacer(nextX, nextY);
-
-                // Update the grid and energy label in the UI
-                SwingUtilities.invokeLater(() -> {
+                // If reached and still has energy, finalize delivery
+                if (robotLivraison.getEnergie() > 0 && robotLivraison.isEnMarche()) {
+                    robotLivraison.ajouterHistorique("Livraison du colis '" + robotLivraison.getColis() + "' à " + robotLivraison.getDestination());
+                    JOptionPane.showMessageDialog(null, "Livraison du colis \"" + robotLivraison.getColis() + "\" à " + robotLivraison.getDestination() + " effectuée.");
+                    robotLivraison.setColis(null);
+                    robotLivraison.setDestination(null);
+                    destinationPoint = null;
                     updateGrid();
-                    // Update the energy label with the current energy
-                    energieLabel.setText("Énergie actuelle : " + robotLivraison.getEnergie() + "%");
-
-                    // Change the energy label color based on energy level
-                    if (robotLivraison.getEnergie() < 30) {
-                        energieLabel.setForeground(Color.ORANGE);
-                    }
-                    if (robotLivraison.getEnergie() < 10) {
-                        energieLabel.setForeground(Color.RED);
-                    }
-                    if (robotLivraison.getEnergie() == 0) {
-                        JOptionPane.showMessageDialog(this, "Batterie vide. Robot arrêté.");
-                    }
-                });
-
-                // Add a short delay to animate movement
-                try {
-                    Thread.sleep(300);
-                } catch (InterruptedException ex) {
-                    ex.printStackTrace();
                 }
+
+                return;
             }
 
-            // Finalize delivery if the robot still has energy
-            if (robotLivraison.getEnergie() > 0 && robotLivraison.isEnMarche()) {
-                robotLivraison.ajouterHistorique("Livraison du colis '" + robotLivraison.getColis() + "' à " + robotLivraison.getDestination());
-                JOptionPane.showMessageDialog(this, "Livraison du colis \"" + robotLivraison.getColis() + "\" à " + robotLivraison.getDestination() + " effectuée.");
-                robotLivraison.setColis(null);
-                robotLivraison.setDestination(null);
-                destinationPoint = null;
-                updateGrid();
+            int nextX = robotLivraison.getX();
+            int nextY = robotLivraison.getY();
+
+            // Calculate next step
+            if (nextX != dest.x)
+                nextX += Integer.signum(dest.x - nextX);
+            else if (nextY != dest.y)
+                nextY += Integer.signum(dest.y - nextY);
+
+            // Move robot
+            robotLivraison.deplacer(nextX, nextY);
+
+            // Update UI
+            updateGrid();
+            energieLabel.setText("Énergie actuelle : " + robotLivraison.getEnergie() + "%");
+
+            // Energy warnings
+            if (robotLivraison.getEnergie() < 30)
+                energieLabel.setForeground(Color.ORANGE);
+            if (robotLivraison.getEnergie() < 10)
+                energieLabel.setForeground(Color.RED);
+            if (robotLivraison.getEnergie() == 0) {
+                JOptionPane.showMessageDialog(null, "Batterie vide. Robot arrêté.");
             }
-        }).start();
+        });
+
+        timer.start();
     }
+
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> new InterfaceRobotLivraison().setVisible(true));

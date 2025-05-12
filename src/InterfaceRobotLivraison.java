@@ -113,15 +113,18 @@ public class InterfaceRobotLivraison extends JFrame {
         });
         btnDemarrer.addActionListener(e -> {
             int seuil = robotLivraison.IsModeEcologique ? 8 : 10;
-            if (robotLivraison.getEnergie()> 10) {
+            if (robotLivraison.getEnergie()> 10 && !robotLivraison.isEnMarche()) {
                 robotLivraison.setEnMarche(true);
                 robotLivraison.ajouterHistorique("Robot démarré");
                 robotLivraison.consommerEnergie(seuil);
                 energieLabel.setText("Énergie actuelle : " + robotLivraison.getEnergie() + "%");
                 updateGrid();
                 JOptionPane.showMessageDialog(this, "Robot démarré.");
-            } else {
+            } else if (!robotLivraison.isEnMarche()) {
                 JOptionPane.showMessageDialog(this, "Impossible de démarrer. Batterie vide.");
+            }
+            else {
+                JOptionPane.showMessageDialog(this, "Robot Deja En Marche");
             }
         });
 

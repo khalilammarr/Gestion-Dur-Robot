@@ -8,9 +8,7 @@ public class InterfaceRobotLivraison extends JFrame {
     private final int GRID_SIZE = 6;
     private JButton[][] gridButtons = new JButton[GRID_SIZE][GRID_SIZE];
     private HashMap<String, Point> destinationMap = new HashMap<>();
-    private String destinationName = null;
     private Point destinationPoint = null;
-    private String colis = null;
     private int energie = 100;
     private JProgressBar energieBar;
     private ImageIcon robotImage;

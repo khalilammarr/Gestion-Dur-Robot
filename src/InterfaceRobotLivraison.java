@@ -9,10 +9,10 @@ public class InterfaceRobotLivraison extends JFrame {
     private JButton[][] gridButtons = new JButton[GRID_SIZE][GRID_SIZE];
     private HashMap<String, Point> destinationMap = new HashMap<>();
     private Point destinationPoint = null;
-    private int energie = 100;
-    private JProgressBar energieBar;
     private ImageIcon robotImage;
     private RobotLivraison robotLivraison;
+    private JLabel energieLabel;
+
     public InterfaceRobotLivraison() {
         setTitle("Simulation Robot Livraison");
         setSize(900, 750);
@@ -43,13 +43,6 @@ public class InterfaceRobotLivraison extends JFrame {
             letter++;
         }
         add(gridPanel, BorderLayout.CENTER);
-
-        // Barre d'énergie
-        energieBar = new JProgressBar(0, 100);
-        energieBar.setValue(energie);
-        energieBar.setStringPainted(true);
-        energieBar.setForeground(Color.GREEN);
-        add(energieBar, BorderLayout.NORTH);
 
         // Panel de contrôle
         JPanel controlPanel = new JPanel();
@@ -86,8 +79,6 @@ public class InterfaceRobotLivraison extends JFrame {
                         throw new IllegalArgumentException();
                     }
                     robotLivraison=new RobotLivraison(x,y,id);
-                    energieBar.setValue(energie);
-                    energieBar.setForeground(Color.GREEN);
                     updateGrid();
                     JOptionPane.showMessageDialog(this, "Robot \"" + id + "\" créé à (" + x + "," + y + ")");
                 } catch (Exception ex) {
@@ -164,8 +155,6 @@ public class InterfaceRobotLivraison extends JFrame {
             JButton rechargeBtn = new JButton("Recharger");
             rechargeBtn.addActionListener(ev -> {
                 robotLivraison.setEnergie(100);
-                energieBar.setValue(energie);
-                energieBar.setForeground(Color.GREEN);
                 robotLivraison.ajouterHistorique("Batterie rechargée à 100%");
                 updateGrid();
             });
@@ -183,6 +172,12 @@ public class InterfaceRobotLivraison extends JFrame {
         controlPanel.add(btnCharger);
         controlPanel.add(btnLivrer);
         controlPanel.add(btnConfig);
+        // Affichage simple de l'énergie
+        energieLabel = new JLabel("Énergie actuelle : --%");
+        JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        topPanel.add(energieLabel);
+        add(topPanel, BorderLayout.NORTH);
+
         add(controlPanel, BorderLayout.SOUTH);
     }
 
@@ -194,24 +189,6 @@ public class InterfaceRobotLivraison extends JFrame {
         ImageIcon icon = new ImageIcon(imgURL);
         Image img = icon.getImage().getScaledInstance(40, 40, Image.SCALE_SMOOTH);
         return new ImageIcon(img);
-    }
-
-    private void consommerEnergie(int quantite) {
-        energie = Math.max(0, energie - quantite);
-        energieBar.setValue(energie);
-
-        if (energie < 30)
-            energieBar.setForeground(Color.ORANGE);
-        if (energie < 10)
-            energieBar.setForeground(Color.RED);
-        if (energie == 0) {
-            robotLivraison.setEnMarche(false) ;
-            robotLivraison.ajouterHistorique("Robot éteint automatiquement : batterie vide");
-            SwingUtilities.invokeLater(() -> {
-                updateGrid();
-                JOptionPane.showMessageDialog(this, "Batterie vide. Robot arrêté.");
-            });
-        }
     }
 
     private void highlightDestination(Point p) {
@@ -243,6 +220,10 @@ public class InterfaceRobotLivraison extends JFrame {
 
         if (destinationPoint != null)
             gridButtons[destinationPoint.x][destinationPoint.y].setBackground(Color.YELLOW);
+        if (robotLivraison != null) {
+            energieLabel.setText("Énergie actuelle : " + robotLivraison.getEnergie() + "%");
+        }
+
     }
 
     private void moveRobotTo(Point dest) {
@@ -250,7 +231,7 @@ public class InterfaceRobotLivraison extends JFrame {
             int dx = dest.x - robotLivraison.getX();
             int dy = dest.y - robotLivraison.getY();
 
-            while ((robotLivraison.getX() != dest.x || robotLivraison.getY() != dest.y) && energie > 0 && robotLivraison.isEnMarche()) {
+            while ((robotLivraison.getX() != dest.x || robotLivraison.getY() != dest.y) && robotLivraison.getEnergie() > 0 && robotLivraison.isEnMarche()) {
                 if (robotLivraison.getX() != dest.x)
                     robotLivraison.setX(robotLivraison.getX() + Integer.signum(dx));
                 else if (robotLivraison.getY() != dest.y)
@@ -258,7 +239,7 @@ public class InterfaceRobotLivraison extends JFrame {
 
                 SwingUtilities.invokeLater(() -> {
                     updateGrid();
-                    consommerEnergie(3);
+                    robotLivraison.consommerEnergie(3);
                     robotLivraison.ajouterHistorique("Déplacement vers (" + robotLivraison.getX() + "," + robotLivraison.getY() + ")");
                 });
 
@@ -268,7 +249,7 @@ public class InterfaceRobotLivraison extends JFrame {
                     ex.printStackTrace();
                 }
             }
-            if (energie > 0 && robotLivraison.isEnMarche()) {
+            if (robotLivraison.getEnergie() > 0 && robotLivraison.isEnMarche()) {
                 robotLivraison.ajouterHistorique("Livraison du colis '" + robotLivraison.getColis() + "' à " + robotLivraison.getDestination());
                 JOptionPane.showMessageDialog(this, "Livraison du colis \"" + robotLivraison.getColis() + "\" à " + robotLivraison.getDestination() + " effectuée.");
                 robotLivraison.setColis(null);

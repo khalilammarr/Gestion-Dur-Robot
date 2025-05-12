@@ -57,7 +57,7 @@ public class RobotLivraison extends RobotConnecte {
         }
         try {
             int energieNecessaire = (int) Math.ceil(0.3 * distance);
-            int seuilEnergie = IsModeEconomic ? (int)(energieNecessaire*0.8): energieNecessaire;
+            int seuilEnergie = IsModeEcologique ? (int)(energieNecessaire*0.8): energieNecessaire;
             verifierMaintenance();
             verifierEnergie(seuilEnergie);
             setX(x);
@@ -108,7 +108,7 @@ public class RobotLivraison extends RobotConnecte {
 
     public void faireLivraison(int Destx, int Desty) {
         try {
-            int seuilEnergie = IsModeEconomic ? (int)(ENERGIE_LIVRAISON*0.8) :ENERGIE_LIVRAISON ;
+            int seuilEnergie = IsModeEcologique ? (int)(ENERGIE_LIVRAISON*0.8) :ENERGIE_LIVRAISON ;
             verifierEnergie(seuilEnergie);
             enlivraison = true;
             deplacer(Destx, Desty);
@@ -127,7 +127,7 @@ public class RobotLivraison extends RobotConnecte {
                 System.out.println("Impossible de charger : déjà en livraison ou colis existant.");
                 return;
             }
-            int seuilEnergie = IsModeEconomic ? (int)(ENERGIE_LIVRAISON*0.8) :ENERGIE_LIVRAISON ;
+            int seuilEnergie = IsModeEcologique ? (int)(ENERGIE_LIVRAISON*0.8) :ENERGIE_LIVRAISON ;
             verifierEnergie(seuilEnergie);
             consommerEnergie(seuilEnergie);
             colisActuel = 1;

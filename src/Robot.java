@@ -12,7 +12,7 @@ public abstract class Robot {
     protected int energie;
     protected int heuresUtilisation = 0;
     protected boolean enMarche = false;
-    protected boolean IsModeEconomic = false;
+    protected boolean IsModeEcologique = false;
     protected List<String> historiqueActions;
 
     public Robot(int x, int y, String id) {
@@ -63,11 +63,11 @@ public abstract class Robot {
 
     // Marche/Arrêt
     public void demarrer() throws EnergieInsuffisanteException {
-        int seuil = IsModeEconomic ? 8 : 10;
+        int seuil = IsModeEcologique ? 8 : 10;
         verifierEnergie(seuil);
         consommerEnergie(seuil);
         enMarche = true;
-        ajouterHistorique("Démarrage du robot" + (IsModeEconomic ? " en mode économique" : ""));
+        ajouterHistorique("Démarrage du robot" + (IsModeEcologique ? " en mode économique" : ""));
     }
 
     public void arreter() {
@@ -78,18 +78,18 @@ public abstract class Robot {
     // Nettoyage
     public void nettoyer() throws EnergieInsuffisanteException, RobotEnPanneException {
         if (!enMarche) throw new RobotEnPanneException();
-        int cout = IsModeEconomic ? 4 : 6;
+        int cout = IsModeEcologique ? 4 : 6;
         verifierEnergie(cout);
         consommerEnergie(cout);
-        ajouterHistorique("Nettoyage à (" + x + "," + y + ")" + (IsModeEconomic ? " [mode économique]" : ""));
+        ajouterHistorique("Nettoyage à (" + x + "," + y + ")" + (IsModeEcologique ? " [mode économique]" : ""));
     }
 
     public void seNettoyer() throws EnergieInsuffisanteException, RobotEnPanneException {
         if (!enMarche) throw new RobotEnPanneException();
-        int cout = IsModeEconomic ? 2 : 3;
+        int cout = IsModeEcologique ? 2 : 3;
         verifierEnergie(cout);
         consommerEnergie(cout);
-        ajouterHistorique("Auto-nettoyage du robot" + (IsModeEconomic ? " [mode économique]" : ""));
+        ajouterHistorique("Auto-nettoyage du robot" + (IsModeEcologique ? " [mode économique]" : ""));
     }
 
     // Rechargement
@@ -115,13 +115,13 @@ public abstract class Robot {
             System.out.println("Erreur audio : " + e.getMessage());
         }
     }
-    public void activerModeEconomic() {
-        IsModeEconomic = true;
+    public void activerModeEcologique() {
+        IsModeEcologique = true;
         ajouterHistorique("Mode économique activé");
     }
 
-    public void desactiverModeEconomic() {
-        IsModeEconomic = false;
+    public void desactiverModeEcologique() {
+        IsModeEcologique = false;
         ajouterHistorique("Mode économique désactivé");
     }
 

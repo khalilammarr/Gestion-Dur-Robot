@@ -158,7 +158,7 @@ public class InterfaceRobotLivraison extends JFrame {
         });
         btnConfig.addActionListener(e -> {
             JTextArea area = new JTextArea();
-            robotLivraison.getHistorique().forEach(entry -> area.append(entry + "\n"));
+            robotLivraison.getHistoriqueActions().forEach(entry -> area.append(entry + "\n"));
             area.setEditable(false);
             JScrollPane scrollPane = new JScrollPane(area);
             scrollPane.setPreferredSize(new Dimension(400, 200));

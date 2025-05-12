@@ -26,8 +26,8 @@ public class Main {
                 case 7: rechargerEnergie(); break;
                 case 8: eteindreRobot(); break;
                 case 9: System.out.println("Au revoir!"); return;
-                case 10: activerModeEconomique(); break;
-                case 11: desactiverModeEconomique(); break;
+                case 10: robot.activerModeEcologique();break;
+                case 11: desactiverModeEcologique(); break;
                 case 12: nettoyerZone(); break;
                 case 13: autoNettoyage(); break;
                 case 14: emettreSonRobot(); break;
@@ -107,16 +107,16 @@ public class Main {
             System.out.println("Vous devez d'abord créer un robot.");
             return;
         }
-        robot.activerModeEconomic();
+        robot.activerModeEcologique();
         System.out.println("Mode économique activé !");
     }
 
-    public static void desactiverModeEconomique() {
+    public static void desactiverModeEcologique() {
         if (robot == null) {
             System.out.println("Vous devez d'abord créer un robot.");
             return;
         }
-        robot.DesactiverModeEconomic();
+        robot.IsModeEcologique = false;
         System.out.println("Mode économique désactivé !");
     }
 
@@ -181,7 +181,7 @@ public class Main {
             System.out.println("Vous devez d'abord créer un robot.");
             return;
         }
-        for (String action : robot.getHistorique()) {
+        for (String action : robot.getHistoriqueActions()) {
             System.out.println(action);
         }
     }

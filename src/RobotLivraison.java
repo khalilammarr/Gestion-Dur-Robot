@@ -68,8 +68,6 @@ public class RobotLivraison extends RobotConnecte {
             System.out.println(e.getMessage());
         }
     }
-
-
     @Override
     public void effectuertacher() throws RobotEnPanneException, EnergieInsuffisanteException {
         Scanner scanner = new Scanner(System.in);

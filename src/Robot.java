@@ -1,3 +1,6 @@
+import javax.swing.Timer;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
 import java.io.File;
@@ -15,6 +18,8 @@ public abstract class Robot {
     protected boolean IsModeEcologique = false;
     protected List<String> historiqueActions;
 
+    private Timer inactiviteTimer; // Timer pour surveiller l'inactivité
+
     public Robot(int x, int y, String id) {
         this.x = x;
         this.y = y;
@@ -22,6 +27,7 @@ public abstract class Robot {
         this.energie = 100;
         this.historiqueActions = new ArrayList<>();
         this.ajouterHistorique("Robot Créé");
+        demarrerSurveillanceInactivite();  // Démarre la surveillance de l'inactivité
     }
 
     // Getters & Setters
@@ -68,11 +74,13 @@ public abstract class Robot {
         consommerEnergie(seuil);
         enMarche = true;
         ajouterHistorique("Démarrage du robot" + (IsModeEcologique ? " en mode économique" : ""));
+        resetInactiviteTimer(); // Réinitialise le timer à chaque démarrage
     }
 
     public void arreter() {
         enMarche = false;
         ajouterHistorique("Arrêt du robot");
+        demarrerSurveillanceInactivite(); // Redémarre la surveillance d'inactivité
     }
 
     // Nettoyage
@@ -82,6 +90,7 @@ public abstract class Robot {
         verifierEnergie(cout);
         consommerEnergie(cout);
         ajouterHistorique("Nettoyage à (" + x + "," + y + ")" + (IsModeEcologique ? " [mode économique]" : ""));
+        resetInactiviteTimer(); // Réinitialise le timer après une action
     }
 
     public void seNettoyer() throws EnergieInsuffisanteException, RobotEnPanneException {
@@ -90,6 +99,7 @@ public abstract class Robot {
         verifierEnergie(cout);
         consommerEnergie(cout);
         ajouterHistorique("Auto-nettoyage du robot" + (IsModeEcologique ? " [mode économique]" : ""));
+        resetInactiviteTimer(); // Réinitialise le timer après une action
     }
 
     // Rechargement
@@ -117,14 +127,39 @@ public abstract class Robot {
             System.out.println("Erreur audio : " + e.getMessage());
         }
     }
+
     public void activerModeEcologique() {
         IsModeEcologique = true;
         ajouterHistorique("Mode économique activé");
     }
-
     public void desactiverModeEcologique() {
         IsModeEcologique = false;
         ajouterHistorique("Mode économique désactivé");
+    }
+    protected void demarrerSurveillanceInactivite() {
+        if (inactiviteTimer != null && inactiviteTimer.isRunning()) {
+            inactiviteTimer.stop();
+        }
+
+        inactiviteTimer = new Timer(5000, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (!enMarche && IsModeEcologique && energie < 100) {
+                    recharger(10); // Recharge de 10% toutes les 5s
+                    ajouterHistorique("Recharge automatique (mode éco) suite à inactivité.");
+                    System.out.println("Recharge automatique déclenchée (mode éco).");
+                    demarrerSurveillanceInactivite(); // Relance la surveillance après la recharge
+                }
+            }
+        });
+        inactiviteTimer.setRepeats(false); // Ne se déclenche qu'une fois
+        inactiviteTimer.start();
+    }
+
+    protected void resetInactiviteTimer() {
+        if (inactiviteTimer != null) {
+            inactiviteTimer.restart(); // Redémarre le timer à chaque action
+        }
     }
 
     // Abstract

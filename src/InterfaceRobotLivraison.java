@@ -78,7 +78,6 @@ public class InterfaceRobotLivraison extends JFrame {
         JButton btnDeconnecter = new JButton("Déconnecter");
         JButton btnEnvoyerDonnees = new JButton("Envoyer Données");
         JButton btnChanter = new JButton("Chanter");
-
         btnCreer.addActionListener(e -> {
             JPanel panel = new JPanel(new GridLayout(3, 2));
             JTextField fieldId = new JTextField();
@@ -92,7 +91,7 @@ public class InterfaceRobotLivraison extends JFrame {
             panel.add(new JLabel("Position Y (0-" + (GRID_SIZE - 1) + ") :"));
             panel.add(fieldY);
 
-            int result = JOptionPane.showConfirmDialog(this, panel, "Créer un nouveau robot", JOptionPane.OK_CANCEL_OPTION);
+            int result = JOptionPane.showConfirmDialog(this, panel, "Créer ugit n nouveau robot", JOptionPane.OK_CANCEL_OPTION);
 
             if (result == JOptionPane.OK_OPTION) {
                 try {
@@ -113,27 +112,65 @@ public class InterfaceRobotLivraison extends JFrame {
         });
         btnDemarrer.addActionListener(e -> {
             int seuil = robotLivraison.IsModeEcologique ? 8 : 10;
-            if (robotLivraison.getEnergie()> 10 && !robotLivraison.isEnMarche()) {
+            if (robotLivraison.getEnergie() > 10 && !robotLivraison.isEnMarche()) {
                 robotLivraison.setEnMarche(true);
                 robotLivraison.ajouterHistorique("Robot démarré");
                 robotLivraison.consommerEnergie(seuil);
-                energieLabel.setText("Énergie actuelle : " + robotLivraison.getEnergie() + "%");
+                energieLabel.setText("Énergie actuelle : " + robotLivraison.getEnergie() + "%"); // Mise à jour de l'énergie
                 updateGrid();
+                robotLivraison.resetInactiviteTimer();
                 JOptionPane.showMessageDialog(this, "Robot démarré.");
             } else if (!robotLivraison.isEnMarche()) {
                 JOptionPane.showMessageDialog(this, "Impossible de démarrer. Batterie vide.");
-            }
-            else {
-                JOptionPane.showMessageDialog(this, "Robot Deja En Marche");
+            } else {
+                JOptionPane.showMessageDialog(this, "Robot déjà en marche");
             }
         });
 
         btnArreter.addActionListener(e -> {
+            if (robotLivraison == null) {
+                JOptionPane.showMessageDialog(this, "Aucun robot disponible !");
+                return;
+            }
+
             robotLivraison.setEnMarche(false);
             robotLivraison.ajouterHistorique("Robot arrêté");
+
+            // Mise à jour de l'énergie à l'arrêt
+            energieLabel.setText("Énergie actuelle : " + robotLivraison.getEnergie() + "%");
+
+            // Affichage du message
+            if (robotLivraison.IsModeEcologique) {
+                JOptionPane.showMessageDialog(this,
+                        "Robot arrêté. Surveillance d'inactivité activée.\n" +
+                                "En mode écologique, le robot se rechargera automatiquement.",
+                        "Surveillance d'inactivité", JOptionPane.INFORMATION_MESSAGE);
+            } else {
+                JOptionPane.showMessageDialog(this,
+                        "Robot arrêté. Pour activer la recharge automatique, activez le mode écologique.",
+                        "Robot arrêté", JOptionPane.INFORMATION_MESSAGE);
+            }
+
             updateGrid();
-            JOptionPane.showMessageDialog(this, "Robot arrêté.");
         });
+        JButton btnSurveillance = new JButton("Activer surveillance");
+        btnSurveillance.addActionListener(e -> {
+            if (robotLivraison != null) {
+                if (!robotLivraison.isEnMarche() && robotLivraison.IsModeEcologique) {
+                    // Appel direct à la méthode de surveillance dans la classe Robot
+                    robotLivraison.demarrerSurveillanceInactivite();  // Active la surveillance d'inactivité
+
+                    JOptionPane.showMessageDialog(this, "Surveillance d'inactivité activée. Le robot se rechargera automatiquement toutes les 10 secondes.");
+                } else if (robotLivraison.isEnMarche()) {
+                    JOptionPane.showMessageDialog(this, "Le robot doit être arrêté pour activer la surveillance d'inactivité.");
+                } else {
+                    JOptionPane.showMessageDialog(this, "Le robot doit être en mode écologique pour activer la surveillance d'inactivité.");
+                }
+            } else {
+                JOptionPane.showMessageDialog(this, "Aucun robot disponible !");
+            }
+        });
+
 
         btnCharger.addActionListener(e -> {
             int seuilEnergie = robotLivraison.IsModeEcologique ? (int)(robotLivraison.ENERGIE_LIVRAISON*0.8) :robotLivraison.ENERGIE_LIVRAISON ;
@@ -306,7 +343,17 @@ public class InterfaceRobotLivraison extends JFrame {
         btnEco.addActionListener(e -> {
             if (robotLivraison != null) {
                 robotLivraison.activerModeEcologique();
-                JOptionPane.showMessageDialog(this, "Mode écologique activé !");
+
+                // Si le robot est arrêté, informer sur la recharge automatique
+                if (!robotLivraison.isEnMarche()) {
+                    JOptionPane.showMessageDialog(this,
+                            "Mode écologique activé !\n" +
+                                    "La surveillance d'inactivité est maintenant active.\n" +
+                                    "Le robot se rechargera automatiquement.",
+                            "Mode écologique", JOptionPane.INFORMATION_MESSAGE);
+                } else {
+                    JOptionPane.showMessageDialog(this, "Mode écologique activé !");
+                }
             } else {
                 JOptionPane.showMessageDialog(this, "Aucun robot disponible !");
             }
@@ -334,6 +381,7 @@ public class InterfaceRobotLivraison extends JFrame {
         controlPanel.add(btnConfig);
         controlPanel.add(btnEco);
         controlPanel.add(btnDesactiverEco);
+        controlPanel.add(btnSurveillance); // Ajouter le bouton de surveillance
 
 
         // Affichage simple de l'énergie

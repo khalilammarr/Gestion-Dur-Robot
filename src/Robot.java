@@ -18,7 +18,7 @@ public abstract class Robot {
     protected boolean IsModeEcologique = false;
     protected List<String> historiqueActions;
 
-    private Timer inactiviteTimer; // Timer pour surveiller l'inactivité
+    private Timer inactiviteTimer;
 
     public Robot(int x, int y, String id) {
         this.x = x;
@@ -27,10 +27,10 @@ public abstract class Robot {
         this.energie = 100;
         this.historiqueActions = new ArrayList<>();
         this.ajouterHistorique("Robot Créé");
-        demarrerSurveillanceInactivite();  // Démarre la surveillance de l'inactivité
+        demarrerSurveillanceInactivite();
     }
 
-    // Getters & Setters
+
     public int getX() { return x; }
     public int getY() { return y; }
     public String getId() { return id; }
@@ -47,13 +47,13 @@ public abstract class Robot {
     public void setEnMarche(boolean enMarche) { this.enMarche = enMarche; }
     public void setHistoriqueActions(List<String> historique) { this.historiqueActions = historique; }
 
-    // Historique
+
     public void ajouterHistorique(String action) {
         String log = "[" + java.time.LocalDateTime.now() + "] " + action;
         historiqueActions.add(log);
     }
 
-    // Vérifications
+
     public boolean verifierEnergie(int energieRequise) throws EnergieInsuffisanteException {
         if (energie < energieRequise) {
             throw new EnergieInsuffisanteException(energieRequise, energie);
@@ -67,30 +67,29 @@ public abstract class Robot {
         }
     }
 
-    // Marche/Arrêt
     public void demarrer() throws EnergieInsuffisanteException {
         int seuil = IsModeEcologique ? 8 : 10;
         verifierEnergie(seuil);
         consommerEnergie(seuil);
         enMarche = true;
         ajouterHistorique("Démarrage du robot" + (IsModeEcologique ? " en mode économique" : ""));
-        resetInactiviteTimer(); // Réinitialise le timer à chaque démarrage
+        resetInactiviteTimer();
     }
 
     public void arreter() {
         enMarche = false;
         ajouterHistorique("Arrêt du robot");
-        demarrerSurveillanceInactivite(); // Redémarre la surveillance d'inactivité
+        demarrerSurveillanceInactivite();
     }
 
-    // Nettoyage
+
     public void nettoyer() throws EnergieInsuffisanteException, RobotEnPanneException {
         if (!enMarche) throw new RobotEnPanneException();
         int cout = IsModeEcologique ? 4 : 6;
         verifierEnergie(cout);
         consommerEnergie(cout);
         ajouterHistorique("Nettoyage à (" + x + "," + y + ")" + (IsModeEcologique ? " [mode économique]" : ""));
-        resetInactiviteTimer(); // Réinitialise le timer après une action
+        resetInactiviteTimer();
     }
 
     public void seNettoyer() throws EnergieInsuffisanteException, RobotEnPanneException {
@@ -99,16 +98,16 @@ public abstract class Robot {
         verifierEnergie(cout);
         consommerEnergie(cout);
         ajouterHistorique("Auto-nettoyage du robot" + (IsModeEcologique ? " [mode économique]" : ""));
-        resetInactiviteTimer(); // Réinitialise le timer après une action
+        resetInactiviteTimer();
     }
 
-    // Rechargement
+
     public void recharger(int quantite) {
         energie = Math.min(energie + quantite, 100);
         ajouterHistorique("Recharge de " + quantite + "%");
     }
 
-    // Consommation énergie
+
     public void consommerEnergie(int quantite) {
         energie = Math.max(0, energie - quantite);
     }
@@ -145,24 +144,24 @@ public abstract class Robot {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (!enMarche && IsModeEcologique && energie < 100) {
-                    recharger(10); // Recharge de 10% toutes les 5s
+                    recharger(10);
                     ajouterHistorique("Recharge automatique (mode éco) suite à inactivité.");
                     System.out.println("Recharge automatique déclenchée (mode éco).");
-                    demarrerSurveillanceInactivite(); // Relance la surveillance après la recharge
+                    demarrerSurveillanceInactivite();
                 }
             }
         });
-        inactiviteTimer.setRepeats(false); // Ne se déclenche qu'une fois
+        inactiviteTimer.setRepeats(false);
         inactiviteTimer.start();
     }
 
     protected void resetInactiviteTimer() {
         if (inactiviteTimer != null) {
-            inactiviteTimer.restart(); // Redémarre le timer à chaque action
+            inactiviteTimer.restart();
         }
     }
 
-    // Abstract
+
     public abstract void deplacer(int x, int y);
     public abstract void effectuertacher() throws RobotEnPanneException, EnergieInsuffisanteException;
 

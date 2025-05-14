@@ -3,7 +3,7 @@ import exceptions.* ;
 
 import java.util.Scanner;
 public class RobotLivraison extends RobotConnecte {
-    // Constantes d'énergie
+
     protected static final int ENERGIE_LIVRAISON = 15;
     protected static final int ENERGIE_CHARGEMENT = 5;
     protected int colisActuel;
@@ -83,7 +83,7 @@ public class RobotLivraison extends RobotConnecte {
             faireLivraison(x,y);
         } else {
             System.out.print("Voulez-vous charger un colis ? (Oui/Non) : ");
-            scanner.nextLine(); // pour nettoyer le buffer
+            scanner.nextLine();
             String reponse = scanner.nextLine().trim().toUpperCase();
 
             while (!reponse.equals("OUI") && !reponse.equals("NON")) {

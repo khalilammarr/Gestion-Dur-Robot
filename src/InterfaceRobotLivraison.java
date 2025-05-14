@@ -16,7 +16,7 @@ public class InterfaceRobotLivraison extends JFrame {
     private RobotLivraison robotLivraison;
     private JLabel energieLabel;
     private JLabel connectionLabel;
-    private String[][] cellLabels = new String[GRID_SIZE][GRID_SIZE]; // Store original cell labels
+    private String[][] cellLabels = new String[GRID_SIZE][GRID_SIZE];
     private String[][] nomsBoutons = new String[GRID_SIZE][GRID_SIZE];
 
 
@@ -30,15 +30,13 @@ public class InterfaceRobotLivraison extends JFrame {
 
         JPanel ctrlPanel = new JPanel();
 
-        // Load and scale robot image
         try {
-            robotImage = loadRobotImage("/robot_icon.png"); // Ensure the image is in resources or root
+            robotImage = loadRobotImage("/robot_icon.png");
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, "Image robot non trouvée !");
             robotImage = null;
         }
 
-        // Panel grille
         JPanel gridPanel = new JPanel(new GridLayout(GRID_SIZE, GRID_SIZE));
         String[] lieuxTunisie = {
                 "Tunis", "La Marsa", "Sidi Bou Saïd", "Ariana", "Carthage", "Le Bardo",
@@ -110,7 +108,7 @@ public class InterfaceRobotLivraison extends JFrame {
                 robotLivraison.setEnMarche(true);
                 robotLivraison.ajouterHistorique("Robot démarré");
                 robotLivraison.consommerEnergie(seuil);
-                energieLabel.setText("Énergie actuelle : " + robotLivraison.getEnergie() + "%"); // Mise à jour de l'énergie
+                energieLabel.setText("Énergie actuelle : " + robotLivraison.getEnergie() + "%");
                 updateGrid();
                 robotLivraison.resetInactiviteTimer();
                 JOptionPane.showMessageDialog(this, "Robot démarré.");
@@ -130,10 +128,8 @@ public class InterfaceRobotLivraison extends JFrame {
             robotLivraison.setEnMarche(false);
             robotLivraison.ajouterHistorique("Robot arrêté");
 
-            // Mise à jour de l'énergie à l'arrêt
             energieLabel.setText("Énergie actuelle : " + robotLivraison.getEnergie() + "%");
 
-            // Affichage du message
             if (robotLivraison.IsModeEcologique) {
                 JOptionPane.showMessageDialog(this,
                         "Robot arrêté. Surveillance d'inactivité activée.\n" +
@@ -188,13 +184,12 @@ public class InterfaceRobotLivraison extends JFrame {
                 JOptionPane.showMessageDialog(this, "Aucune destination définie !");
                 return;
             }
-            //robotLivraison.faireLivraison(destinationPoint.x, destinationPoint.y);
             moveRobotTo(destinationPoint);
         });
         btnConfig.addActionListener(e -> {
             JTextArea area = new JTextArea();
 
-            // Using traditional for loop instead of forEach
+
             List<String> historique = robotLivraison.getHistoriqueActions();
             for (int i = 0; i < historique.size(); i++) {
                 String entry = historique.get(i);
@@ -304,7 +299,7 @@ public class InterfaceRobotLivraison extends JFrame {
                 try {
                     robotLivraison.envoyerDonnees(donnees);
                     energieLabel.setText("Énergie actuelle : " + robotLivraison.getEnergie() + "%");
-                    updateGrid(); // Update to reflect energy consumption
+                    updateGrid();
                     JOptionPane.showMessageDialog(this, "Données envoyées avec succès.");
                 } catch (RobotNonConnecteException ex) {
                     JOptionPane.showMessageDialog(this, "Le robot n'est pas connecté. Veuillez vous connecter d'abord.");
@@ -320,7 +315,7 @@ public class InterfaceRobotLivraison extends JFrame {
             if (robotLivraison != null) {
                 robotLivraison.activerModeEcologique();
 
-                // Si le robot est arrêté, informer sur la recharge automatique
+
                 if (!robotLivraison.isEnMarche()) {
                     JOptionPane.showMessageDialog(this,
                             "Mode écologique activé !\n" +
@@ -355,7 +350,6 @@ public class InterfaceRobotLivraison extends JFrame {
         controlPanel.add(btnConfig);
         controlPanel.add(btnEco);
         controlPanel.add(btnDesactiverEco);
-        // Affichage simple de l'énergie
         energieLabel = new JLabel("Énergie actuelle : --%");
         connectionLabel = new JLabel("État: Non connecté");
         connectionLabel.setForeground(Color.RED);
@@ -402,7 +396,7 @@ public class InterfaceRobotLivraison extends JFrame {
                 energieLabel.setText("Énergie actuelle : " + robotLivraison.getEnergie() + "%");
                 System.out.println("Recharge automatique déclenchée (interface).");
 
-                // Redémarrer le timer
+
                 demarrerSurveillanceInactiviteDansUI();
             }
         });
@@ -412,7 +406,6 @@ public class InterfaceRobotLivraison extends JFrame {
     }
 
     private void updateGrid() {
-        // Reset all cells to their original state
         for (int i = 0; i < GRID_SIZE; i++) {
             for (int j = 0; j < GRID_SIZE; j++) {
                 gridButtons[i][j].setText(nomsBoutons[i][j]);
@@ -421,9 +414,8 @@ public class InterfaceRobotLivraison extends JFrame {
             }
         }
 
-        // Check if robot exists
         if (robotLivraison != null) {
-            // Set robot position
+
             if (robotImage != null) {
                 gridButtons[robotLivraison.getX()][robotLivraison.getY()].setText("");
                 gridButtons[robotLivraison.getX()][robotLivraison.getY()].setIcon(robotImage);
@@ -431,21 +423,21 @@ public class InterfaceRobotLivraison extends JFrame {
                 gridButtons[robotLivraison.getX()][robotLivraison.getY()].setText("🤖");
             }
 
-            // Change background color based on robot state
-            Color robotColor = Color.LIGHT_GRAY; // Default: not running
+
+            Color robotColor = Color.LIGHT_GRAY;
             if (robotLivraison.isEnMarche()) {
-                if (robotLivraison.connecte) { // Check if connected - using direct field access
-                    robotColor = new Color(100, 200, 100); // Green if connected
+                if (robotLivraison.connecte) {
+                    robotColor = new Color(100, 200, 100);
                 } else {
-                    robotColor = Color.CYAN; // Blue if running but not connected
+                    robotColor = Color.CYAN;
                 }
             }
             gridButtons[robotLivraison.getX()][robotLivraison.getY()].setBackground(robotColor);
 
-            // Update energy label
+
             energieLabel.setText("Énergie actuelle : " + robotLivraison.getEnergie() + "%");
 
-            // Update connection status
+
             if (robotLivraison.connecte) {
                 connectionLabel.setText("État: Connecté à " + robotLivraison.reseauConnecte);
                 connectionLabel.setForeground(Color.GREEN);
@@ -459,11 +451,11 @@ public class InterfaceRobotLivraison extends JFrame {
         }
     }
     private void moveRobotTo(Point dest) {
-        Timer timer = new Timer(300, null); // 300ms delay between moves
+        Timer timer = new Timer(300, null);
         timer.addActionListener(e -> {
             if (!robotLivraison.isEnMarche() || robotLivraison.getEnergie() <= 0 ||
                     (robotLivraison.getX() == dest.x && robotLivraison.getY() == dest.y)) {
-                // Stop timer when destination is reached or when robot is inactive or energy is depleted
+
                 timer.stop();
                 if (robotLivraison.getEnergie() > 0 && robotLivraison.isEnMarche()) {
                     robotLivraison.ajouterHistorique("Livraison du colis '" + robotLivraison.getColis() + "' à " + robotLivraison.getDestination());
@@ -476,7 +468,6 @@ public class InterfaceRobotLivraison extends JFrame {
                 return;
             }
 
-            // Determine the next step towards destination (x, y)
             int nextX = robotLivraison.getX();
             int nextY = robotLivraison.getY();
 
@@ -492,9 +483,8 @@ public class InterfaceRobotLivraison extends JFrame {
             robotLivraison.deplacer(nextX, nextY);
             updateGrid();
             energieLabel.setText("Énergie actuelle : " + robotLivraison.getEnergie() + "%");
-            energieLabel.setForeground(Color.BLACK); // Reset color
+            energieLabel.setForeground(Color.BLACK);
 
-            // Handle energy warnings
             if (robotLivraison.getEnergie() < 30) {
                 energieLabel.setForeground(Color.ORANGE);
             }

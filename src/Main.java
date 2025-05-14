@@ -1,7 +1,5 @@
-import exceptions.EnergieInsuffisanteException;
-import exceptions.RobotEnPanneException;
-
 import java.util.Scanner;
+import exceptions.* ;
 
 public class Main {
 
@@ -16,7 +14,7 @@ public class Main {
             int choix = scanner.nextInt();
 
             switch (choix) {
-                case 0: creerRobot(scanner); break;
+                case 0: creerRobot(); break;
                 case 1: demarrerRobot(); break;
                 case 2: chargerColis(); break;
                 case 3: effectuerTache(); break;
@@ -55,7 +53,8 @@ public class Main {
 
 
 
-    public static void creerRobot(Scanner scanner) {
+    public static void creerRobot() {
+        Scanner scanner = new Scanner(System.in);
         System.out.print("Entrez l'ID du robot : ");
         String id = scanner.next();
         System.out.print("Entrez les coordonnées X du robot : ");

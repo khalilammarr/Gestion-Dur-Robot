@@ -1,6 +1,6 @@
 package exceptions;
 
-public class EnergieInsuffisanteException extends Exception {
+public class EnergieInsuffisanteException extends RobotException {
     public EnergieInsuffisanteException(int requise, int disponible) {
         super("Énergie insuffisante : requise = " + requise + "%, disponible = " + disponible + "%.");
     }
@@ -9,5 +9,3 @@ public class EnergieInsuffisanteException extends Exception {
         super("Impossible de " + operation + " : énergie requise = " + requise + "%, disponible = " + disponible + "%.");
     }
 }
-
-

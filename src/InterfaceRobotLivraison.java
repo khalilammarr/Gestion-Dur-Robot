@@ -64,10 +64,7 @@ public class InterfaceRobotLivraison extends JFrame {
         }
 
         add(gridPanel, BorderLayout.CENTER);
-
-        // Panel de contrôle
         JPanel controlPanel = new JPanel();
-
         JButton btnCreer = new JButton("Créer Robot");
         JButton btnCharger = new JButton("Charger Colis");
         JButton btnLivrer = new JButton("Faire Livraison");
@@ -83,16 +80,13 @@ public class InterfaceRobotLivraison extends JFrame {
             JTextField fieldId = new JTextField();
             JTextField fieldX = new JTextField();
             JTextField fieldY = new JTextField();
-
             panel.add(new JLabel("ID du Robot :"));
             panel.add(fieldId);
             panel.add(new JLabel("Position X (0-" + (GRID_SIZE - 1) + ") :"));
             panel.add(fieldX);
             panel.add(new JLabel("Position Y (0-" + (GRID_SIZE - 1) + ") :"));
             panel.add(fieldY);
-
             int result = JOptionPane.showConfirmDialog(this, panel, "Créer ugit n nouveau robot", JOptionPane.OK_CANCEL_OPTION);
-
             if (result == JOptionPane.OK_OPTION) {
                 try {
                     int x = Integer.parseInt(fieldX.getText());

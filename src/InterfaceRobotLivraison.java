@@ -137,8 +137,9 @@ public class InterfaceRobotLivraison extends JFrame {
             if (robotLivraison.IsModeEcologique) {
                 JOptionPane.showMessageDialog(this,
                         "Robot arrêté. Surveillance d'inactivité activée.\n" +
-                                "En mode écologique, le robot se rechargera automatiquement.",
-                        "Surveillance d'inactivité", JOptionPane.INFORMATION_MESSAGE);
+                                "En mode écologique, le robot se rechargera automatiquement.");
+                demarrerSurveillanceInactiviteDansUI();
+                JOptionPane.showMessageDialog(this, "Surveillance d'inactivité activée. Le robot se rechargera automatiquement toutes les 10 secondes.");
             } else {
                 JOptionPane.showMessageDialog(this,
                         "Robot arrêté. Pour activer la recharge automatique, activez le mode écologique.",
@@ -147,25 +148,6 @@ public class InterfaceRobotLivraison extends JFrame {
 
             updateGrid();
         });
-        JButton btnSurveillance = new JButton("Activer surveillance");
-        btnSurveillance.addActionListener(e -> {
-            if (robotLivraison != null) {
-                if (!robotLivraison.isEnMarche() && robotLivraison.IsModeEcologique) {
-                    // Appel direct à la méthode de surveillance dans la classe Robot
-                    demarrerSurveillanceInactiviteDansUI();  // Active la surveillance d'inactivité
-
-                    JOptionPane.showMessageDialog(this, "Surveillance d'inactivité activée. Le robot se rechargera automatiquement toutes les 10 secondes.");
-                } else if (robotLivraison.isEnMarche()) {
-                    JOptionPane.showMessageDialog(this, "Le robot doit être arrêté pour activer la surveillance d'inactivité.");
-                } else {
-                    JOptionPane.showMessageDialog(this, "Le robot doit être en mode écologique pour activer la surveillance d'inactivité.");
-                }
-            } else {
-                JOptionPane.showMessageDialog(this, "Aucun robot disponible !");
-            }
-        });
-
-
         btnCharger.addActionListener(e -> {
             int seuilEnergie = robotLivraison.IsModeEcologique ? (int)(robotLivraison.ENERGIE_LIVRAISON*0.8) :robotLivraison.ENERGIE_LIVRAISON ;
             if (!robotLivraison.isEnMarche()) {
@@ -361,8 +343,6 @@ public class InterfaceRobotLivraison extends JFrame {
                 JOptionPane.showMessageDialog(this, "Aucun robot disponible !");
             }
         });
-
-
         controlPanel.add(btnCreer);
         controlPanel.add(btnDemarrer);
         controlPanel.add(btnArreter);
@@ -375,9 +355,6 @@ public class InterfaceRobotLivraison extends JFrame {
         controlPanel.add(btnConfig);
         controlPanel.add(btnEco);
         controlPanel.add(btnDesactiverEco);
-        controlPanel.add(btnSurveillance); // Ajouter le bouton de surveillance
-
-
         // Affichage simple de l'énergie
         energieLabel = new JLabel("Énergie actuelle : --%");
         connectionLabel = new JLabel("État: Non connecté");

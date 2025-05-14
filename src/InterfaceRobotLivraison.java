@@ -152,7 +152,7 @@ public class InterfaceRobotLivraison extends JFrame {
             if (robotLivraison != null) {
                 if (!robotLivraison.isEnMarche() && robotLivraison.IsModeEcologique) {
                     // Appel direct à la méthode de surveillance dans la classe Robot
-                    robotLivraison.demarrerSurveillanceInactivite();  // Active la surveillance d'inactivité
+                    demarrerSurveillanceInactiviteDansUI();  // Active la surveillance d'inactivité
 
                     JOptionPane.showMessageDialog(this, "Surveillance d'inactivité activée. Le robot se rechargera automatiquement toutes les 10 secondes.");
                 } else if (robotLivraison.isEnMarche()) {
@@ -411,6 +411,27 @@ public class InterfaceRobotLivraison extends JFrame {
 
         gridButtons[p.x][p.y].setBackground(Color.YELLOW);
         updateGrid();
+    }
+    private Timer inactiviteTimer;
+
+    private void demarrerSurveillanceInactiviteDansUI() {
+        if (inactiviteTimer != null && inactiviteTimer.isRunning()) {
+            inactiviteTimer.stop();
+        }
+
+        inactiviteTimer = new Timer(5000, e -> {
+            if (!robotLivraison.isEnMarche() && robotLivraison.IsModeEcologique && robotLivraison.getEnergie() < 100) {
+                robotLivraison.recharger(10);
+                energieLabel.setText("Énergie actuelle : " + robotLivraison.getEnergie() + "%");
+                System.out.println("Recharge automatique déclenchée (interface).");
+
+                // Redémarrer le timer
+                demarrerSurveillanceInactiviteDansUI();
+            }
+        });
+
+        inactiviteTimer.setRepeats(false);
+        inactiviteTimer.start();
     }
 
     private void updateGrid() {

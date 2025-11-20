@@ -48,7 +48,7 @@ public class Main {
         System.out.println("║ 12. 🧹 Nettoyer la zone          │ 13. 🧽 Nettoyer le robot (auto)     ║");
         System.out.println("║ 14. 🔊 chanter                   │                                     ║");
         System.out.println("╚════════════════════════════════════════════════════════════════════╝");
-        System.out.print("👉 Choisissez une option : ");
+        System.out.print("👉 Choisissez      une option : ");
     }
 
 
